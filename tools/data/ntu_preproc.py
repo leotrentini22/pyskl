@@ -11,32 +11,33 @@ from pyskl.smp import mrlines
 eps = 1e-3
 
 
-def parse_skeleton_file(ske_name, root='nturgb+d_skeletons'):
-    ske_file = osp.join(root, ske_name + '.skeleton')
+def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
+    ske_file = osp.join(root, ske_name + '.prediction.json')
 
     lines = mrlines(ske_file)
     idx = 0
-    num_frames = int(lines[0])
-    num_joints = 25
+    num_frames = 1 #int(lines[0])
+    num_joints = 120
     idx += 1
 
     body_data = dict()
     fidx = 0
 
     for f in range(num_frames):
-        num_bodies = int(lines[idx])
+        num_bodies = 1 #int(lines[idx])
         idx += 1
         if num_bodies == 0:
             continue
         for b in range(num_bodies):
-            bodyID = int(lines[idx].split()[0])
+            bodyID = 0 #int(lines[idx].split()[0])
             if bodyID not in body_data:
                 kpt = []
                 body_data[bodyID] = dict(kpt=kpt, start=fidx)
+            
+            #idx += 1
+            #assert int(lines[idx]) == 90
             idx += 1
-            assert int(lines[idx]) == 25
-            idx += 1
-            joints = np.zeros((25, 3), dtype=np.float32)
+            joints = np.zeros((120, 3), dtype=np.float32)
 
             for j in range(num_joints):
                 line = lines[idx].split()
@@ -131,42 +132,52 @@ def gen_keypoint_array(body_data):
         return keypoint
 
 
-root = 'nturgb+d_skeletons'
+root = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'
 skeleton_files = os.listdir(root)
-names = [x.split('.')[0] for x in skeleton_files]
-names.sort()
-missing = mrlines('ntu120_missing.txt')
-missing = set(missing)
-names = [x for x in names if x not in missing]
+names = [x.split('.predictions.json')[0] for x in skeleton_files]
+#names.sort()
+#missing = mrlines('ntu120_missing.txt')
+#missing = set(missing)
+#names = [x for x in names if x not in missing]
 
 extended = False
-for name in names:
-    if int(name.split('A')[-1]) > 60:
-        extended = True
-        print('NTURGB+D 120 skeleton files detected, will generate both ntu60_3danno.pkl and ntu120_3danno.pkl. ')
-        break
+# for name in names:
+#     if int(name.split('A')[-1]) > 60:
+#         extended = True
+#         print('NTURGB+D 120 skeleton files detected, will generate both ntu60_3danno.pkl and ntu120_3danno.pkl. ')
+#         break
 
-if not extended:
-    print('NTURGB+D 120 skeleton files not detected, will only generate ntu60_3danno.pkl. ')
+# if not extended:
+#     print('NTURGB+D 120 skeleton files not detected, will only generate ntu60_3danno.pkl. ')
 
 
-def gen_anno(name):
+def gen_anno(name, labels):
     body_data = parse_skeleton_file(name, root)
     if len(body_data) == 0:
         return None
     keypoint = gen_keypoint_array(body_data).astype(np.float16)
-    label = int(name.split('A')[-1]) - 1
-    total_frames = keypoint.shape[1]
+    label = labels #int(name.split('A')[-1]) - 1
+    total_frames = 1 #keypoint.shape[1]
     return dict(frame_dir=name, label=label, keypoint=keypoint, total_frames=total_frames)
 
+def get_labels(it):
+    #returns labels (i.e. AUs) of the image
+    #to change "train", or "val", or "test"
+    with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_train_label.txt', 'r') as f:
+        lines = f.readlines()
+    # it+1 because it has to skip the first line, line 0 doesn't count
+    return int(lines[it+1])
 
 anno_dict = {}
 num_process = 1
 
 if num_process == 1:
     # Each annotations has 4 keys: frame_dir, label, keypoint, total_frames
+    it = 0
     for name in tqdm(names):
+        labels = get_labels(it)
         anno_dict[name] = gen_anno(name)
+        it += 1
 else:
     pool = mp.Pool(num_process)
     annotations = pool.map(gen_anno, names)
@@ -175,11 +186,11 @@ else:
         anno_dict[anno['frame_dir']] = anno
 
 names = [x for x in names if anno_dict is not None]
-training_subjects = [
-    1, 2, 4, 5, 8, 9, 13, 14, 15, 16, 17, 18, 19, 25, 27, 28, 31, 34, 35,
-    38, 45, 46, 47, 49, 50, 52, 53, 54, 55, 56, 57, 58, 59, 70, 74, 78,
-    80, 81, 82, 83, 84, 85, 86, 89, 91, 92, 93, 94, 95, 97, 98, 100, 103
-]
+# training_subjects = [
+#     1, 2, 4, 5, 8, 9, 13, 14, 15, 16, 17, 18, 19, 25, 27, 28, 31, 34, 35,
+#     38, 45, 46, 47, 49, 50, 52, 53, 54, 55, 56, 57, 58, 59, 70, 74, 78,
+#     80, 81, 82, 83, 84, 85, 86, 89, 91, 92, 93, 94, 95, 97, 98, 100, 103
+# ]
 
 if extended:
     xsub_train = [name for name in names if int(name.split('P')[1][:3]) in training_subjects]
@@ -190,11 +201,11 @@ if extended:
     annotations = [anno_dict[name] for name in names]
     dump(dict(split=split, annotations=annotations), 'ntu120_3danno.pkl')
 
-names = [name for name in names if int(name.split('A')[-1]) <= 60]
-xsub_train = [name for name in names if int(name.split('P')[1][:3]) in training_subjects]
-xsub_val = [name for name in names if int(name.split('P')[1][:3]) not in training_subjects]
-xview_train = [name for name in names if 'C001' not in name]
-xview_val = [name for name in names if 'C001' in name]
-split = dict(xsub_train=xsub_train, xsub_val=xsub_val, xview_train=xview_train, xview_val=xview_val)
+#names = [name for name in names if int(name.split('A')[-1]) <= 60]
+# xsub_train = [name for name in names if int(name.split('P')[1][:3]) in training_subjects]
+# xsub_val = [name for name in names if int(name.split('P')[1][:3]) not in training_subjects]
+# xview_train = [name for name in names if 'C001' not in name]
+# xview_val = [name for name in names if 'C001' in name]
+split = dict() #xsub_train=xsub_train, xsub_val=xsub_val, xview_train=xview_train, xview_val=xview_val)
 annotations = [anno_dict[name] for name in names]
-dump(dict(split=split, annotations=annotations), 'ntu60_3danno.pkl')
+dump(dict(split=split, annotations=annotations), 'AffWild_train.pkl')
