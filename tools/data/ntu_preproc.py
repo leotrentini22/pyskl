@@ -6,7 +6,13 @@ import os.path as osp
 from mmcv import dump
 from tqdm import tqdm
 
-from pyskl.smp import mrlines
+#from pyskl.smp import mrlines
+
+def mrlines(fname, sp='\n'):
+    f = open(fname).read().split(sp)
+    while f != [] and f[-1] == '':
+        f = f[:-1]
+    return f
 
 eps = 1e-3
 
