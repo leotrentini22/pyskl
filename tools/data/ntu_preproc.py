@@ -18,6 +18,7 @@ def mrlines(fname, sp='\n'):
 eps = 1e-3
 
 def parse_keypoints(json_path, joints):
+    print(json_path, flush=True)
     try:
         # Parse the JSON string
         with open(json_path) as f:
@@ -36,7 +37,7 @@ def parse_keypoints(json_path, joints):
             joints[i//3] = [x, y, c]
 
         return joints
-    except (IndexError, KeyError) as e:
+    except (ValueError, IndexError, KeyError) as e:
         # If an exception is raised, return the original joints array
         return joints
 
@@ -213,7 +214,7 @@ if num_process == 1:
     it = 0
     for name in tqdm(names):
         labels = get_labels(it)
-        print(it, flush=True)
+        
         anno_dict[name] = gen_anno(name, labels)
         it += 1
 else:
