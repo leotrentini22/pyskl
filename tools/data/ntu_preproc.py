@@ -26,7 +26,9 @@ def parse_keypoints(json_path, joints):
         # Parse the JSON string
         with open(json_path) as f:
             data = json.load(f)
-        print(data, flush=True)
+        print(json_path)
+        print(data[0][:], flush=True)
+        print(data[0]['keypoints'], flush=True)
         keypoints = data[0]['keypoints']
 
         # Iterate over the elements in the keypoints array
