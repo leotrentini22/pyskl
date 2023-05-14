@@ -178,11 +178,11 @@ anno_dict = {}
 num_process = 1
 
 if num_process == 1:
-    # Each annotations has 4 keys: frame_dir, label, keypoint, total_frames
+    # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
     it = 0
     for name in tqdm(names):
         labels = get_labels(it)
-        anno_dict[name] = gen_anno(name)
+        anno_dict[name] = gen_anno(name, labels)
         it += 1
 else:
     pool = mp.Pool(num_process)
