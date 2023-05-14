@@ -18,24 +18,22 @@ def mrlines(fname, sp='\n'):
 eps = 1e-3
 
 def parse_keypoints(json_path, joints):
-    try:
-        
+    try:        
         # Parse the JSON string
         with open(json_path) as f:
             data = json.load(f)
-        if len(data) > 0:
-            keypoints = data[0]['keypoints']
+        keypoints = data[0]['keypoints']
 
-            # Iterate over the elements in the keypoints array
-            for i in range(0, len(keypoints), 3):
-                # Split the string into a list of three strings
-                triplet = keypoints[i:i+3]
-                # Remove commas from each string
-                #triplet = [val.strip(',') for val in triplet]
-                # Convert each string to a float
-                x, y, c = triplet #[float(val) for val in triplet]
-                # Assign the resulting values to the joints array
-                joints[i//3] = [x, y, c]
+        # Iterate over the elements in the keypoints array
+        for i in range(0, len(keypoints), 3):
+            # Split the string into a list of three strings
+            triplet = keypoints[i:i+3]
+            # Remove commas from each string
+            #triplet = [val.strip(',') for val in triplet]
+            # Convert each string to a float
+            x, y, c = triplet #[float(val) for val in triplet]
+            # Assign the resulting values to the joints array
+            joints[i//3] = [x, y, c]
 
         return joints
     except (ValueError, IndexError, KeyError) as e:
@@ -44,53 +42,59 @@ def parse_keypoints(json_path, joints):
 
 
 def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
-    ske_file = osp.join(root, ske_name + '.predictions.json')
-    with open(ske_file) as f:
-        data = json.load(f)
-    
-    keypoints = data[0]['keypoints']
-
-    lines = mrlines(ske_file)
-    idx = 0
-    num_frames = 1 #int(lines[0])
-    num_joints = len(keypoints)//3
-    #idx += 1
-
     body_data = dict()
-    fidx = 0
+    ske_file = osp.join(root, ske_name) # + '.predictions.json')
+    try:    
+        with open(ske_file) as f:
+            data = json.load(f)
+        
+        keypoints = data[0]['keypoints']
 
-    for f in range(num_frames):
-        num_bodies = 1 #int(lines[idx])
+        lines = mrlines(ske_file)
+        idx = 0
+        num_frames = 1 #int(lines[0])
+        num_joints = len(keypoints)//3
         #idx += 1
-        if num_bodies == 0:
-            continue
-        for b in range(num_bodies):
-            bodyID = 0 #int(lines[idx].split()[0])
-            if bodyID not in body_data:
-                kpt = []
-                body_data[bodyID] = dict(kpt=kpt, start=fidx)
-            
+
+        fidx = 0
+
+        for f in range(num_frames):
+            num_bodies = 1 #int(lines[idx])
             #idx += 1
-            #assert int(lines[idx]) == 90
-            #idx += 1
-            joints = np.zeros((num_joints, 3), dtype=np.float32)
-            joints = parse_keypoints(ske_file, joints)
+            if num_bodies == 0:
+                continue
+            for b in range(num_bodies):
+                bodyID = 0 #int(lines[idx].split()[0])
+                if bodyID not in body_data:
+                    kpt = []
+                    body_data[bodyID] = dict(kpt=kpt, start=fidx)
+                
+                #idx += 1
+                #assert int(lines[idx]) == 90
+                #idx += 1
+                joints = np.zeros((num_joints, 3), dtype=np.float32)
+                joints = parse_keypoints(ske_file, joints)
 
-            # for j in range(num_joints):
-            #     line = lines[idx].split()
-            #     print(line, flush=True)
-            #     joints[j, :3] = np.array(line[:3], dtype=np.float32)
-            #     print(joints[j, :3], flush=True)
-            #     idx += 1
-            body_data[bodyID]['kpt'].append(joints)
-        fidx += 1
+                # for j in range(num_joints):
+                #     line = lines[idx].split()
+                #     print(line, flush=True)
+                #     joints[j, :3] = np.array(line[:3], dtype=np.float32)
+                #     print(joints[j, :3], flush=True)
+                #     idx += 1
+                body_data[bodyID]['kpt'].append(joints)
+            fidx += 1
 
-    for k in body_data:
-        body_data[k]['motion'] = np.sum(np.var(np.vstack(body_data[k]['kpt']), axis=0))
-        body_data[k]['kpt'] = np.stack(body_data[k]['kpt'])
+        for k in body_data:
+            body_data[k]['motion'] = np.sum(np.var(np.vstack(body_data[k]['kpt']), axis=0))
+            body_data[k]['kpt'] = np.stack(body_data[k]['kpt'])
 
-    #assert idx == len(lines)
-    return body_data
+        #assert idx == len(lines)
+        return body_data
+    except (ValueError, IndexError, KeyError) as e:
+        # If an exception is raised, return the original joints array
+        print('qui fa errore', flush=True)
+        print(ske_file, flush=True)
+        return body_data
 
 
 def spread_denoising(body_data_list):
@@ -173,7 +177,7 @@ def gen_keypoint_array(body_data):
 
 root = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'
 skeleton_files = os.listdir(root)
-names = [x.split('.predictions.json')[0] for x in skeleton_files]
+names = skeleton_files #[x for x in skeleton_files] #[x.split('.predictions.json')[0] for x in skeleton_files]
 #names.sort()
 #missing = mrlines('ntu120_missing.txt')
 #missing = set(missing)
