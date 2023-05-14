@@ -17,9 +17,10 @@ def mrlines(fname, sp='\n'):
 
 eps = 1e-3
 
-def parse_keypoints(json_str, joints):
+def parse_keypoints(json_path, joints):
     # Parse the JSON string
-    data = json.loads(json_str)
+    with open(json_path) as f:
+        data = json.load(f)
     keypoints = data[0]['keypoints']
 
     # Iterate over the elements in the keypoints array
@@ -36,7 +37,8 @@ def parse_keypoints(json_str, joints):
 
 def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
     ske_file = osp.join(root, ske_name + '.predictions.json')
-    data = json.loads(ske_file)
+    with open(ske_file) as f:
+        data = json.load(f)
     keypoints = data[0]['keypoints']
 
     lines = mrlines(ske_file)
