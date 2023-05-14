@@ -233,7 +233,7 @@ if num_process == 1:
     for name in tqdm(range(200)):
         labels = get_labels(it)
         file_json = get_json(it)
-        print(file_json, flush=True)
+        #print(file_json, flush=True)
         anno_dict[file_json] = gen_anno(file_json, labels)
         file_count.append(file_json)
         it += 1
@@ -268,3 +268,11 @@ if extended:
 split = dict() #xsub_train=xsub_train, xsub_val=xsub_val, xview_train=xview_train, xview_val=xview_val)
 annotations = [anno_dict[name] for name in file_count] #names]
 dump(dict(split=split, annotations=annotations), 'AffWild_train.pkl')
+
+
+import pickle
+
+with open('AffWild_train.pkl', 'rb') as f:
+    data = pickle.load(f)
+
+print(data)
