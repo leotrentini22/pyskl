@@ -18,7 +18,7 @@ eps = 1e-3
 
 
 def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
-    ske_file = osp.join(root, ske_name + '.prediction.json')
+    ske_file = osp.join(root, ske_name + '.predictions.json')
 
     lines = mrlines(ske_file)
     idx = 0
