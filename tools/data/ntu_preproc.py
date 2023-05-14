@@ -172,7 +172,7 @@ def get_labels(it):
     with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_train_label.txt', 'r') as f:
         lines = f.readlines()
     # it+1 because it has to skip the first line, line 0 doesn't count
-    return int(lines[it+1])
+    return np.array(lines[it+1].split('\n')[0].split()).astype(float)
 
 anno_dict = {}
 num_process = 1
