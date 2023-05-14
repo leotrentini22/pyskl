@@ -18,11 +18,15 @@ def mrlines(fname, sp='\n'):
 eps = 1e-3
 
 def parse_keypoints(json_path, joints):
-    print(json_path, flush=True)
     try:
+        # Check if file is empty
+        if os.stat(file_path).st_size == 0:
+            return joints
+        
         # Parse the JSON string
         with open(json_path) as f:
             data = json.load(f)
+        print(data, flush=True)
         keypoints = data[0]['keypoints']
 
         # Iterate over the elements in the keypoints array
