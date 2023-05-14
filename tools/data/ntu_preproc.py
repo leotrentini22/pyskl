@@ -19,27 +19,23 @@ eps = 1e-3
 
 def parse_keypoints(json_path, joints):
     try:
-        # Check if file is empty
-        if os.stat(json_path).st_size == 0:
-            return joints
         
         # Parse the JSON string
         with open(json_path) as f:
             data = json.load(f)
-        print(json_path, flush=True)
-        print(data[0]['keypoints'], flush=True)
-        keypoints = data[0]['keypoints']
+        if len(data) > 0:
+            keypoints = data[0]['keypoints']
 
-        # Iterate over the elements in the keypoints array
-        for i in range(0, len(keypoints), 3):
-            # Split the string into a list of three strings
-            triplet = keypoints[i:i+3]
-            # Remove commas from each string
-            #triplet = [val.strip(',') for val in triplet]
-            # Convert each string to a float
-            x, y, c = triplet #[float(val) for val in triplet]
-            # Assign the resulting values to the joints array
-            joints[i//3] = [x, y, c]
+            # Iterate over the elements in the keypoints array
+            for i in range(0, len(keypoints), 3):
+                # Split the string into a list of three strings
+                triplet = keypoints[i:i+3]
+                # Remove commas from each string
+                #triplet = [val.strip(',') for val in triplet]
+                # Convert each string to a float
+                x, y, c = triplet #[float(val) for val in triplet]
+                # Assign the resulting values to the joints array
+                joints[i//3] = [x, y, c]
 
         return joints
     except (ValueError, IndexError, KeyError) as e:
@@ -219,7 +215,8 @@ if num_process == 1:
     it = 0
     for name in tqdm(names):
         labels = get_labels(it)
-        
+        print(name, flush=True)
+        print(labels, flush=True)
         anno_dict[name] = gen_anno(name, labels)
         it += 1
 else:
