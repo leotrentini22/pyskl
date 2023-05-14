@@ -225,15 +225,17 @@ def get_json(it):
 
 anno_dict = {}
 num_process = 1
+file_count=[]
 
 if num_process == 1:
     # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
     it = 0
-    for name in tqdm(names):
+    for name in tqdm(range(200)):
         labels = get_labels(it)
         file_json = get_json(it)
         print(file_json, flush=True)
         anno_dict[file_json] = gen_anno(file_json, labels)
+        file_count.append(file_json)
         it += 1
 else:
     pool = mp.Pool(num_process)
@@ -264,5 +266,5 @@ if extended:
 # xview_train = [name for name in names if 'C001' not in name]
 # xview_val = [name for name in names if 'C001' in name]
 split = dict() #xsub_train=xsub_train, xsub_val=xsub_val, xview_train=xview_train, xview_val=xview_val)
-annotations = [anno_dict[name] for name in names]
+annotations = [anno_dict[name] for name in file_count] #names]
 dump(dict(split=split, annotations=annotations), 'AffWild_train.pkl')
