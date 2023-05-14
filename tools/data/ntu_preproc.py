@@ -20,7 +20,7 @@ eps = 1e-3
 def parse_keypoints(json_path, joints):
     try:
         # Check if file is empty
-        if os.stat(file_path).st_size == 0:
+        if os.stat(json_path).st_size == 0:
             return joints
         
         # Parse the JSON string
