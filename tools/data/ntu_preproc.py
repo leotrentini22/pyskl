@@ -18,29 +18,34 @@ def mrlines(fname, sp='\n'):
 eps = 1e-3
 
 def parse_keypoints(json_path, joints):
-    # Parse the JSON string
-    with open(json_path) as f:
-        data = json.load(f)
-    keypoints = data[0]['keypoints']
+    try:
+        # Parse the JSON string
+        with open(json_path) as f:
+            data = json.load(f)
+        keypoints = data[0]['keypoints']
 
-    # Iterate over the elements in the keypoints array
-    for i in range(0, len(keypoints), 3):
-        # Split the string into a list of three strings
-        triplet = keypoints[i:i+3]
-        # Remove commas from each string
-        #triplet = [val.strip(',') for val in triplet]
-        # Convert each string to a float
-        x, y, c = triplet #[float(val) for val in triplet]
-        # Assign the resulting values to the joints array
-        joints[i//3] = [x, y, c]
+        # Iterate over the elements in the keypoints array
+        for i in range(0, len(keypoints), 3):
+            # Split the string into a list of three strings
+            triplet = keypoints[i:i+3]
+            # Remove commas from each string
+            #triplet = [val.strip(',') for val in triplet]
+            # Convert each string to a float
+            x, y, c = triplet #[float(val) for val in triplet]
+            # Assign the resulting values to the joints array
+            joints[i//3] = [x, y, c]
 
-    return joints
+        return joints
+    except (IndexError, KeyError) as e:
+        # If an exception is raised, return the original joints array
+        return joints
 
 
 def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
     ske_file = osp.join(root, ske_name + '.predictions.json')
     with open(ske_file) as f:
         data = json.load(f)
+    
     keypoints = data[0]['keypoints']
 
     lines = mrlines(ske_file)
@@ -208,6 +213,7 @@ if num_process == 1:
     it = 0
     for name in tqdm(names):
         labels = get_labels(it)
+        print(it, flush=True)
         anno_dict[name] = gen_anno(name, labels)
         it += 1
 else:
