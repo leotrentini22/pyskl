@@ -211,6 +211,18 @@ def get_labels(it):
     # it+1 because it has to skip the first line, line 0 doesn't count
     return np.array(lines[it+1].split('\n')[0].split()).astype(float)
 
+def get_json(it):
+    #returns the json path
+    #to change "train", or "val", or "test"
+    with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_train_img_path.txt', 'r') as f:
+        lines = f.readlines()
+    # it+1 because it has to skip the first line, line 0 doesn't count
+    image_path = lines[it+1]
+    directory_name = os.path.basename(os.path.dirname(image_path))
+    file_name = os.path.splitext(os.path.basename(image_path))[0]
+    json_file_name = f"{directory_name}.{file_name}.predictions.json"
+    return json_file_name
+
 anno_dict = {}
 num_process = 1
 
@@ -219,9 +231,9 @@ if num_process == 1:
     it = 0
     for name in tqdm(names):
         labels = get_labels(it)
-        print(name, flush=True)
-        print(labels, flush=True)
-        anno_dict[name] = gen_anno(name, labels)
+        file_json = get_json(it)
+        print(file_json)
+        anno_dict[file_json] = gen_anno(file_json, labels)
         it += 1
 else:
     pool = mp.Pool(num_process)
