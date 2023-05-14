@@ -27,8 +27,10 @@ def parse_keypoints(json_path, joints):
     for i in range(0, len(keypoints), 3):
         # Split the string into a list of three strings
         triplet = keypoints[i:i+3]
+        # Remove commas from each string
+        triplet = [val.strip(',') for val in triplet]
         # Convert each string to a float
-        x, y, c = [float(val.strip(',')) for val in triplet]
+        x, y, c = [float(val) for val in triplet]
         # Assign the resulting values to the joints array
         joints[i//3] = [x, y, c]
 
