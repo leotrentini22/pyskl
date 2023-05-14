@@ -24,14 +24,14 @@ def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/d
     idx = 0
     num_frames = 1 #int(lines[0])
     num_joints = 120
-    idx += 1
+    #idx += 1
 
     body_data = dict()
     fidx = 0
 
     for f in range(num_frames):
         num_bodies = 1 #int(lines[idx])
-        idx += 1
+        #idx += 1
         if num_bodies == 0:
             continue
         for b in range(num_bodies):
@@ -42,12 +42,14 @@ def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/d
             
             #idx += 1
             #assert int(lines[idx]) == 90
-            idx += 1
+            #idx += 1
             joints = np.zeros((120, 3), dtype=np.float32)
 
             for j in range(num_joints):
                 line = lines[idx].split()
+                print(line, flush=True)
                 joints[j, :3] = np.array(line[:3], dtype=np.float32)
+                print(joints[j, :3], flush=True)
                 idx += 1
             body_data[bodyID]['kpt'].append(joints)
         fidx += 1
