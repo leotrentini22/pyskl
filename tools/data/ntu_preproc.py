@@ -232,7 +232,7 @@ if num_process == 1:
     for name in tqdm(names):
         labels = get_labels(it)
         file_json = get_json(it)
-        print(file_json)
+        print(file_json, flush=True)
         anno_dict[file_json] = gen_anno(file_json, labels)
         it += 1
 else:
