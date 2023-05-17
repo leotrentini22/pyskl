@@ -250,7 +250,7 @@ names_train = [x for x in names_train if anno_dict is not None]
 
 ### Val
 
-root = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Val_Set'
+root = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Validation_Set'
 skeleton_files = os.listdir(root)
 names_val = skeleton_files 
 
