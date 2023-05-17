@@ -40,8 +40,10 @@ class SimpleHead(BaseHead):
         self.mode = mode
 
         self.in_c = in_channels
-        self.fc_cls = nn.Linear(self.in_c, num_classes)
-        self.fc_cls2 = nn.Sigmoid(self.in_c, num_classes)
+        self.fc_cls2 = nn.Sequential(
+            nn.Linear(self.in_c, num_classes),
+            nn.Sigmoid()
+        )
 
     def init_weights(self):
         """Initiate the parameters from scratch."""
@@ -92,7 +94,6 @@ class SimpleHead(BaseHead):
             x = self.dropout(x)
 
         cls_score = self.fc_cls(x)
-        cls_score = self.fc_cls2(cls_score) #this added to make a sigmoid instead of a softmax
         return cls_score
 
 

@@ -9,5 +9,5 @@
 #SBATCH --partition=debug
 
 cd tools/data
-srun python ntu_preproc.py
+srun python affwild_preproc.py
 deactivate
