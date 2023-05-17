@@ -122,6 +122,76 @@ def mean_class_accuracy(scores, labels):
     return mean_class_acc
 
 
+def statistics(pred, y, thresh):
+    batch_size = pred.size(0)
+    class_nb = pred.size(1)
+    pred = pred >= thresh
+    pred = pred.long()
+    statistics_list = []
+    for j in range(class_nb):
+        TP = 0
+        FP = 0
+        FN = 0
+        TN = 0
+        for i in range(batch_size):
+            if pred[i][j] == 1:
+                if y[i][j] == 1:
+                    TP += 1
+                elif y[i][j] == 0:
+                    FP += 1
+                else:
+                    continue
+            elif pred[i][j] == 0:
+                if y[i][j] == 1:
+                    FN += 1
+                elif y[i][j] == 0:
+                    TN += 1
+                else:
+                    continue
+            else:
+                assert False
+        statistics_list.append({'TP': TP, 'FP': FP, 'TN': TN, 'FN': FN})
+    return statistics_list
+
+
+def f1_score(scores, labels, val_weight=None):
+    """Calculate f1 score for multi-class recognition.
+
+    Args:
+        scores (list[np.ndarray]): Prediction scores for each class.
+        labels (list[np.ndarray]): Ground truth many-hot vector for each
+            sample.
+
+    Returns:
+        Mean f1 score, f1 score list.
+    """    
+    f1_score_list = []
+    len_list=0
+    thresh = 0.5
+    statistics_list = statistics(scores, labels, thresh)
+
+    for i in range(len(statistics_list)):
+        TP = statistics_list[i]['TP']
+        FP = statistics_list[i]['FP']
+        FN = statistics_list[i]['FN']
+
+        precise = TP / (TP + FP + 1e-20)
+        recall = TP / (TP + FN + 1e-20)
+        f1_score = 2 * precise * recall / (precise + recall + 1e-20)
+        if val_weight is not None:
+            if (val_weight[i]>0):
+                f1_score_list.append(f1_score)
+                len_list = len_list+1
+            else: 
+                f1_score_list.append(f1_score*0)
+        else:
+            f1_score_list.append(f1_score)
+            len_list = len_list+1
+    mean_f1_score = sum(f1_score_list) / len_list
+
+    return mean_f1_score, f1_score_list
+
+
 def top_k_accuracy(scores, labels, topk=(1, )):
     """Calculate top k accuracy score.
 

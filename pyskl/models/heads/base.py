@@ -21,7 +21,7 @@ class BaseHead(nn.Module, metaclass=ABCMeta):
         loss_cls (dict): Config for building loss.
             Default: dict(type='CrossEntropyLoss', loss_weight=1.0).
         multi_class (bool): Determines whether it is a multi-class
-            recognition task. Default: False.
+            recognition task. Default: True.
         label_smooth_eps (float): Epsilon used in label smooth.
             Reference: arxiv.org/abs/1906.02629. Default: 0.
     """
@@ -29,8 +29,8 @@ class BaseHead(nn.Module, metaclass=ABCMeta):
     def __init__(self,
                  num_classes,
                  in_channels,
-                 loss_cls=dict(type='CrossEntropyLoss', loss_weight=1.0),
-                 multi_class=False,
+                 loss_cls=dict(type='CrossEntropyLoss', loss_weight=1.0),  #controllare cos'e' la cross entropy loss
+                 multi_class=True,
                  label_smooth_eps=0.0):
         super().__init__()
         self.num_classes = num_classes
@@ -48,7 +48,7 @@ class BaseHead(nn.Module, metaclass=ABCMeta):
     def forward(self, x):
         """Defines the computation performed at every call."""
 
-    def loss(self, cls_score, label, **kwargs):
+    def loss(self, cls_score, label, **kwargs):   # qui bisogna capire cosa fa
         """Calculate the loss given output ``cls_score``, target ``label``.
 
         Args:

@@ -174,26 +174,6 @@ def gen_keypoint_array(body_data):
             keypoint = keypoint[::-1]
         return keypoint
 
-
-root = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'
-skeleton_files = os.listdir(root)
-names = skeleton_files #[x for x in skeleton_files] #[x.split('.predictions.json')[0] for x in skeleton_files]
-#names.sort()
-#missing = mrlines('ntu120_missing.txt')
-#missing = set(missing)
-#names = [x for x in names if x not in missing]
-
-extended = False
-# for name in names:
-#     if int(name.split('A')[-1]) > 60:
-#         extended = True
-#         print('NTURGB+D 120 skeleton files detected, will generate both ntu60_3danno.pkl and ntu120_3danno.pkl. ')
-#         break
-
-# if not extended:
-#     print('NTURGB+D 120 skeleton files not detected, will only generate ntu60_3danno.pkl. ')
-
-
 def gen_anno(name, labels):
     body_data = parse_skeleton_file(name, root)
     if len(body_data) == 0:
@@ -203,25 +183,46 @@ def gen_anno(name, labels):
     total_frames = 1 #keypoint.shape[1]
     return dict(frame_dir=name, label=label, keypoint=keypoint, total_frames=total_frames)
 
-def get_labels(it):
+def get_labels(it, root):
     #returns labels (i.e. AUs) of the image
-    #to change "train", or "val", or "test"
-    with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_train_label.txt', 'r') as f:
-        lines = f.readlines()
+    if (root == '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
+        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_train_label.txt', 'r') as f:
+            lines = f.readlines()
+    elif (root == '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Val_Set'):
+        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_val_label.txt', 'r') as f:
+            lines = f.readlines()
+    else:
+        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_test_label.txt', 'r') as f:
+            lines = f.readlines()
     # it+1 because it has to skip the first line, line 0 doesn't count
     return np.array(lines[it+1].split('\n')[0].split()).astype(float)
 
-def get_json(it):
+def get_json(it, root):
     #returns the json path
-    #to change "train", or "val", or "test"
-    with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_train_img_path.txt', 'r') as f:
-        lines = f.readlines()
+    if (root == '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
+        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_train_img_path.txt', 'r') as f:
+            lines = f.readlines()
+    elif (root == '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Val_Set'):
+        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_val_img_path.txt', 'r') as f:
+            lines = f.readlines()
+    else:
+        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_test_img_path.txt', 'r') as f:
+            lines = f.readlines()
     # it+1 because it has to skip the first line, line 0 doesn't count
     image_path = lines[it+1]
     directory_name = os.path.basename(os.path.dirname(image_path))
     file_name = os.path.splitext(os.path.basename(image_path))[0]
     json_file_name = f"{directory_name}.{file_name}.predictions.json"
     return json_file_name
+
+
+### Here starts the script
+
+### Train
+
+root = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'
+skeleton_files = os.listdir(root)
+names_train = skeleton_files 
 
 anno_dict = {}
 num_process = 1
@@ -230,49 +231,55 @@ file_count=[]
 if num_process == 1:
     # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
     it = 0
-    for name in tqdm(range(200)):
-        labels = get_labels(it)
-        file_json = get_json(it)
-        #print(file_json, flush=True)
+    for name in tqdm(200): #names_train):
+        labels = get_labels(it, root)
+        file_json = get_json(it, root)
         anno_dict[file_json] = gen_anno(file_json, labels)
         file_count.append(file_json)
         it += 1
 else:
     pool = mp.Pool(num_process)
-    annotations = pool.map(gen_anno, names)
+    annotations = pool.map(gen_anno, names_train)
     pool.close()
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-names = [x for x in names if anno_dict is not None]
-# training_subjects = [
-#     1, 2, 4, 5, 8, 9, 13, 14, 15, 16, 17, 18, 19, 25, 27, 28, 31, 34, 35,
-#     38, 45, 46, 47, 49, 50, 52, 53, 54, 55, 56, 57, 58, 59, 70, 74, 78,
-#     80, 81, 82, 83, 84, 85, 86, 89, 91, 92, 93, 94, 95, 97, 98, 100, 103
-# ]
+names_train = [x for x in names_train if anno_dict is not None]
 
-if extended:
-    xsub_train = [name for name in names if int(name.split('P')[1][:3]) in training_subjects]
-    xsub_val = [name for name in names if int(name.split('P')[1][:3]) not in training_subjects]
-    xset_train = [name for name in names if int(name.split('S')[1][:3]) % 2 == 0]
-    xset_val = [name for name in names if int(name.split('S')[1][:3]) % 2 == 1]
-    split = dict(xsub_train=xsub_train, xsub_val=xsub_val, xset_train=xset_train, xset_val=xset_val)
-    annotations = [anno_dict[name] for name in names]
-    dump(dict(split=split, annotations=annotations), 'ntu120_3danno.pkl')
+
+
+### Val
+
+root = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Val_Set'
+skeleton_files = os.listdir(root)
+names_val = skeleton_files 
+
+
+if num_process == 1:
+    # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
+    it = 0
+    for name in tqdm(200): #names_val):
+        labels = get_labels(it, root)
+        file_json = get_json(it, root)
+        anno_dict[file_json] = gen_anno(file_json, labels)
+        file_count.append(file_json)
+        it += 1
+else:
+    pool = mp.Pool(num_process)
+    annotations = pool.map(gen_anno, names_val)
+    pool.close()
+    for anno in annotations:
+        anno_dict[anno['frame_dir']] = anno
+
+names_test = [x for x in names_val if anno_dict is not None]
+
+
 
 #names = [name for name in names if int(name.split('A')[-1]) <= 60]
-# xsub_train = [name for name in names if int(name.split('P')[1][:3]) in training_subjects]
-# xsub_val = [name for name in names if int(name.split('P')[1][:3]) not in training_subjects]
+xsub_train = [name for name in names_train]
+xsub_val = [name for name in names_val]
 # xview_train = [name for name in names if 'C001' not in name]
 # xview_val = [name for name in names if 'C001' in name]
-split = dict() #xsub_train=xsub_train, xsub_val=xsub_val, xview_train=xview_train, xview_val=xview_val)
+split = dict(xsub_train=xsub_train, xsub_val=xsub_val) #xsub_train=xsub_train, xsub_val=xsub_val, xview_train=xview_train, xview_val=xview_val)
 annotations = [anno_dict[name] for name in file_count] #names]
 dump(dict(split=split, annotations=annotations), 'AffWild_train.pkl')
-
-
-import pickle
-
-with open('AffWild_train.pkl', 'rb') as f:
-    data = pickle.load(f)
-
-print(data)
