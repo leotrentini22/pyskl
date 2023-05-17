@@ -8,5 +8,5 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --partition=debug
 
-srun tools/dist_train.sh configs/posec3d/slowonly_r50_affwild_xsub/joint.py 8 --validate --test-last --test-best
+srun tools/dist_train.sh configs/posec3d/slowonly_r50_affwild_xsub/joint.py 1 --validate --test-last --test-best
 deactivate
