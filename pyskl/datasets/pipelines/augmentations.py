@@ -447,6 +447,9 @@ class Resize:
 
         self.scale_factor = np.array([new_w / img_w, new_h / img_h],
                                      dtype=np.float32)
+        
+        print("self.scale_factor", flush=True)
+        print(self.scale_factor, flush=True)
 
         results['img_shape'] = (new_h, new_w)
         results['keep_ratio'] = self.keep_ratio
