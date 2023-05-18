@@ -415,7 +415,8 @@ class Resize:
 
     @staticmethod
     def _resize_kps(kps, scale_factor):
-        return kps * scale_factor
+        reshaped_scale_factor = scale_factor.reshape((1,) + scale_factor.shape)
+        return kps * reshaped_scale_factor
 
     @staticmethod
     def _box_resize(box, scale_factor):
