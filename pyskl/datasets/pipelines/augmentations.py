@@ -416,7 +416,8 @@ class Resize:
     @staticmethod
     def _resize_kps(kps, scale_factor):
         reshaped_scale_factor = scale_factor.reshape((1,) + scale_factor.shape)
-        return kps * reshaped_scale_factor
+        scale_factor_modified = np.hstack((reshaped_scale_factor, np.array([[1]])))
+        return kps * scale_factor_modified[:, None, None, :]
 
     @staticmethod
     def _box_resize(box, scale_factor):
