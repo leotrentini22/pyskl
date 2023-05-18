@@ -20,7 +20,7 @@ model = dict(
     test_cfg=dict(average_clips=None))  #to skip the softmax
 
 dataset_type = 'PoseDataset'
-ann_file = 'tools/data/affwild_train.pkl'
+ann_file = '/home/trentini/pyskl/tools/data/affwild_train.pkl'
 left_kp = [] #[1, 3, 5, 7, 9, 11, 13, 15]
 right_kp = [] #[2, 4, 6, 8, 10, 12, 14, 16]
 train_pipeline = [
