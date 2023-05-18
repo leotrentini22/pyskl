@@ -12,7 +12,7 @@ from mmcv.utils import print_log
 from torch.utils.data import Dataset
 
 from pyskl.smp import auto_mix2
-from ..core import mean_average_precision, mean_class_accuracy, top_k_accuracy
+from ..core import mean_average_precision, mean_class_accuracy, top_k_accuracy, f1_score
 from .pipelines import Compose
 
 
@@ -48,7 +48,7 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
                  pipeline,
                  data_prefix='',
                  test_mode=False,
-                 multi_class=False,
+                 multi_class=True,
                  num_classes=None,
                  start_index=1,
                  modality='RGB',
@@ -213,6 +213,17 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
                 print_log(log_msg, logger=logger)
                 continue
 
+            if metric == 'f1_score':
+                gt_labels_arrays = [
+                    self.label2array(self.num_classes, label)
+                    for label in gt_labels
+                ]
+                mAP = f1_score(results, gt_labels_arrays)
+                eval_results['f1_score'] = mAP
+                log_msg = f'\nf1_score\t{mAP:.4f}'
+                print_log(log_msg, logger=logger)
+                continue
+
             if metric == 'mean_average_precision':
                 gt_labels_arrays = [
                     self.label2array(self.num_classes, label)
@@ -270,6 +281,11 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
             results['label'] = onehot
 
         results['test_mode'] = self.test_mode
+
+        # added here img_shape
+
+        results['img_shape'] = (256,256) #height and width
+
         return self.pipeline(results)
 
     def prepare_test_frames(self, idx):

@@ -14,7 +14,7 @@ model = dict(
         temporal_strides=(1, 1, 2)),
     cls_head=dict(
         type='I3DHead',
-        in_channels=512,
+        in_channels=256,
         num_classes= 12, # this is the number of action units
         dropout=0.5),
     test_cfg=dict(average_clips=None))  #to skip the softmax
@@ -51,7 +51,7 @@ test_pipeline = [
     dict(type='PoseDecode'),
     dict(type='PoseCompact', hw_ratio=1., allow_imgpad=True),
     dict(type='Resize', scale=(64, 64), keep_ratio=False),
-    dict(type='GeneratePoseTarget', with_kp=True, with_limb=False, double=True, left_kp=left_kp, right_kp=right_kp),
+    dict(type='GeneratePoseTarget', with_kp=True, with_limb=False) #, double=True, left_kp=left_kp, right_kp=right_kp),
     dict(type='FormatShape', input_format='NCTHW_Heatmap'),
     dict(type='Collect', keys=['imgs', 'label'], meta_keys=[]),
     dict(type='ToTensor', keys=['imgs'])

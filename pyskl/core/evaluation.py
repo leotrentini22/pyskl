@@ -189,7 +189,7 @@ def f1_score(scores, labels, val_weight=None):
             len_list = len_list+1
     mean_f1_score = sum(f1_score_list) / len_list
 
-    return mean_f1_score, f1_score_list
+    return mean_f1_score #, f1_score_list
 
 
 def top_k_accuracy(scores, labels, topk=(1, )):
