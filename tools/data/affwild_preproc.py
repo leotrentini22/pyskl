@@ -185,28 +185,34 @@ def gen_anno(name, labels):
 
 def get_labels(it, root):
     #returns labels (i.e. AUs) of the image
-    if (root == '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
-        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_train_label.txt', 'r') as f:
+    index = root.index("skeletons")
+    path = root[0:index]
+    set = os.path.basename(root)
+    if (set == 'Train_Set'):
+        with open(os.path.join(path,'list/AffWild2_train_label.txt'), 'r') as f:
             lines = f.readlines()
-    elif (root == '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Val_Set'):
-        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_val_label.txt', 'r') as f:
+    elif (set == 'Validation_Set'):
+        with open(os.path.join(path,'list/AffWild2_val_label.txt'), 'r') as f:
             lines = f.readlines()
     else:
-        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_test_label.txt', 'r') as f:
+        with open(os.path.join(path,'list/AffWild2_test_label.txt'), 'r') as f:
             lines = f.readlines()
     # it+1 because it has to skip the first line, line 0 doesn't count
     return np.array(lines[it+1].split('\n')[0].split()).astype(float)
 
 def get_json(it, root):
     #returns the json path
-    if (root == '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
-        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_train_img_path.txt', 'r') as f:
+    index = root.index("skeletons")
+    path = root[0:index]
+    set = os.path.basename(root)
+    if (set == 'Train_Set'):
+        with open(os.path.join(path,'list/AffWild2_train_img_path.txt'), 'r') as f:
             lines = f.readlines()
-    elif (root == '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Val_Set'):
-        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_val_img_path.txt', 'r') as f:
+    elif (set == 'Validation_Set'):
+        with open(os.path.join(path,'list/AffWild2_val_img_path.txt'), 'r') as f:
             lines = f.readlines()
     else:
-        with open('/home/trentini/face-skeleton-detection/data/AffWild2/list/AffWild2_test_img_path.txt', 'r') as f:
+        with open(os.path.join(path,'list/AffWild2_test_img_path.txt'), 'r') as f:
             lines = f.readlines()
     # it+1 because it has to skip the first line, line 0 doesn't count
     image_path = lines[it+1]
@@ -218,9 +224,15 @@ def get_json(it, root):
 
 ### Here starts the script
 
+path = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons'
+
+
+
+
 ### Train
 
-root = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'
+set = 'Train_Set'
+root = os.path.join(path, set)
 skeleton_files = os.listdir(root)
 names_train = skeleton_files 
 
@@ -250,7 +262,8 @@ names_train = [x for x in names_train if anno_dict is not None]
 
 ### Val
 
-root = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Validation_Set'
+set = 'Validation_Set'
+root = os.path.join(path, set)
 skeleton_files = os.listdir(root)
 names_val = skeleton_files 
 
