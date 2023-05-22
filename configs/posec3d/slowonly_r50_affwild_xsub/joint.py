@@ -14,7 +14,7 @@ model = dict(
         temporal_strides=(1, 1, 2)),
     cls_head=dict(
         type='I3DHead',
-        in_channels=256,
+        in_channels=512,
         num_classes= 12, # this is the number of action units
         dropout=0.5),
     test_cfg=dict(average_clips=None))  #to skip the softmax
