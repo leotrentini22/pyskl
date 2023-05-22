@@ -102,6 +102,19 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
 
     @staticmethod
     def label2array(num, label):
+        # if not isinstance(label, list):
+        #     label = [label]
+
+
+        # arr = np.zeros((120,), dtype=np.float32)
+        # for l in label:
+        #     if not isinstance(l, np.ndarray):
+        #         l = np.array(l)  # Convert to a numpy array if not already an array
+        #         arr[l] = 1.0
+
+        #         #fino a qui
+        print(label, flush=True)
+        label=int(label)
         arr = np.zeros(num, dtype=np.float32)
         arr[label] = 1.
         return arr
