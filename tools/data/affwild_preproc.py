@@ -40,10 +40,12 @@ def parse_keypoints(json_path, joints, score):
         return joints, score
     except (ValueError, IndexError, KeyError) as e:
         # If an exception is raised, return the original joints array
+        print('qui fa errore parse kps', flush=True)
+        print(ske_file, flush=True)
         return joints
 
 
-def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
+def parse_skeleton_file(ske_name, root): #='/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
     body_data = dict()
     ske_file = osp.join(root, ske_name) # + '.predictions.json')
     try:    
@@ -69,7 +71,8 @@ def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/d
                 bodyID = 0 #int(lines[idx].split()[0])
                 if bodyID not in body_data:
                     kpt = []
-                    body_data[bodyID] = dict(kpt=kpt, start=fidx)
+                    kpt_score = []
+                    body_data[bodyID] = dict(kpt=kpt, start=fidx, kpt_score=kpt_score)
                 
                 #idx += 1
                 #assert int(lines[idx]) == 90
@@ -85,19 +88,19 @@ def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/d
                 #     print(joints[j, :3], flush=True)
                 #     idx += 1
                 body_data[bodyID]['kpt'].append(joints)
-                body_data[bodyID]['keypoint_score'].append(score)
+                body_data[bodyID]['kpt_score'].append(score)
             fidx += 1
 
         for k in body_data:
             body_data[k]['motion'] = np.sum(np.var(np.vstack(body_data[k]['kpt']), axis=0))
             body_data[k]['kpt'] = np.stack(body_data[k]['kpt'])
-            body_data[k]['keypoint_score'] = np.stack(body_data[k]['keypoint_score'])
+            body_data[k]['kpt_score'] = np.stack(body_data[k]['kpt_score'])
 
         #assert idx == len(lines)
         return body_data
     except (ValueError, IndexError, KeyError) as e:
         # If an exception is raised, return the original joints array
-        print('qui fa errore', flush=True)
+        print('qui fa errore ', flush=True)
         print(ske_file, flush=True)
         return body_data
 
