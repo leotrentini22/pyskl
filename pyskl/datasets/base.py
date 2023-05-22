@@ -172,7 +172,7 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
                 metric_options['top_k_accuracy'], **deprecated_kwargs)
 
         metrics = metrics if isinstance(metrics, (list, tuple)) else [metrics]
-        allowed_metrics = ['top_k_accuracy', 'mean_class_accuracy', 'mean_average_precision']
+        allowed_metrics = ['top_k_accuracy', 'mean_class_accuracy', 'mean_average_precision', 'f1_score']
 
         for metric in metrics:
             if metric not in allowed_metrics:
