@@ -113,8 +113,8 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         #         arr[l] = 1.0
 
         #         #fino a qui
-        print(label, flush=True)
-        label=int(label)
+        label = np.array(label)
+        label = label.astype(int)
         arr = np.zeros(num, dtype=np.float32)
         arr[label] = 1.
         return arr
