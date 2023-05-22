@@ -181,6 +181,42 @@ def gen_keypoint_array(body_data):
         if np.sum(np.abs(keypoint[0, 0, 1])) < eps and np.sum(np.abs(keypoint[1, 0, 1])) > eps:
             keypoint = keypoint[::-1]
         return keypoint
+    
+def gen_keypoint_score_array(body_data):
+    length_threshold = 11
+
+    body_data = cp.deepcopy(list(body_data.values()))
+    body_data.sort(key=lambda x: -x['motion'])
+    if len(body_data) == 1:
+        return body_data[0]['kpt_score'][None]
+    else:
+        body_data = [item for item in body_data if item['kpt_score'].shape[0] > length_threshold]
+        if len(body_data) == 1:
+            return body_data[0]['kpt_score'][None]
+        body_data = spread_denoising(body_data)
+        if len(body_data) == 1:
+            return body_data[0]['kpt_score'][None]
+        max_fidx = 0
+
+        for item in body_data:
+            max_fidx = max(max_fidx, item['start'] + item['kpt'].shape[0])
+        keypoint = np.zeros((2, max_fidx, 25, 3), np.float32)
+
+        s1, e1, s2, e2 = body_data[0]['start'], body_data[0]['start'] + body_data[0]['kpt_score'].shape[0], 0, 0
+        keypoint[0, s1: e1] = body_data[0]['kpt_score']
+        for item in body_data[1:]:
+            s, e = item['start'], item['start'] + item['kpt_score'].shape[0]
+            if max(s1, s) >= min(e1, e):
+                keypoint[0, s: e] = item['kpt_score']
+                s1, e1 = min(s, s1), max(e, e1)
+            elif max(s2, s) >= min(e2, e):
+                keypoint[1, s: e] = item['kpt_score']
+                s2, e2 = min(s, s2), max(e, e2)
+
+        keypoint = non_zero(keypoint)
+        if np.sum(np.abs(keypoint[0, 0, 1])) < eps and np.sum(np.abs(keypoint[1, 0, 1])) > eps:
+            keypoint = keypoint[::-1]
+        return keypoint
 
 def gen_anno(name, labels):
     body_data = parse_skeleton_file(name, root)
@@ -189,7 +225,11 @@ def gen_anno(name, labels):
     keypoint = gen_keypoint_array(body_data).astype(np.float16)
     label = labels #int(name.split('A')[-1]) - 1
     total_frames = 1 #keypoint.shape[1]
-    return dict(frame_dir=name, label=label, keypoint=keypoint, total_frames=total_frames)
+    img_shape = (256,256)
+    original_shape = img_shape
+    keypoint_score = gen_keypoint_score_array(body_data).astype(np.float16)
+
+    return dict(frame_dir=name, label=label, keypoint=keypoint, total_frames=total_frames, img_shape=img_shape, original_shape=original_shape, keypoint_score=keypoint_score)
 
 def get_labels(it, root):
     #returns labels (i.e. AUs) of the image

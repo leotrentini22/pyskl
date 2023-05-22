@@ -57,7 +57,10 @@ class PoseCompact:
         assert self.padding >= 0
 
     def __call__(self, results):
-        img_shape = results['img_shape']
+        if 'img_shape' in results:
+            img_shape = results['img_shape']
+        else:
+            img_shape = (256, 256)
         h, w = img_shape
         kp = results['keypoint']
 
