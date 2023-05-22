@@ -134,10 +134,11 @@ class RandomCrop:
 
     @staticmethod
     def _crop_kps(kps, crop_bbox):
+        crop_bbox = crop_bbox[:2]
         reshaped_crop_bbox = crop_bbox.reshape((1,) + crop_bbox.shape)
         crop_bbox_modified = np.hstack((reshaped_crop_bbox, np.array([[0]])))
         
-        return kps - crop_bbox_modified[:, None, None, :3]
+        return kps - crop_bbox_modified[:, None, None, :]
 
 #crop_bbox_reshaped = np.reshape(crop_bbox_modified, (1, 1, 1, 3))
     @staticmethod
