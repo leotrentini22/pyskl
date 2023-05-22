@@ -138,7 +138,7 @@ class RandomCrop:
         reshaped_crop_bbox = crop_bbox.reshape((1,) + crop_bbox.shape)
         crop_bbox_modified = np.hstack((reshaped_crop_bbox, np.array([[0]])))
         
-        return kps - crop_bbox_modified[:, None, None, :]
+        return kps - crop_bbox #_modified[:, None, None, :]
 
 #crop_bbox_reshaped = np.reshape(crop_bbox_modified, (1, 1, 1, 3))
     @staticmethod
@@ -422,7 +422,7 @@ class Resize:
     def _resize_kps(kps, scale_factor):
         reshaped_scale_factor = scale_factor.reshape((1,) + scale_factor.shape)
         scale_factor_modified = np.hstack((reshaped_scale_factor, np.array([[1]])))
-        return kps * scale_factor_modified[:, None, None, :]
+        return kps * scale_factor #_modified[:, None, None, :]
 
     @staticmethod
     def _box_resize(box, scale_factor):

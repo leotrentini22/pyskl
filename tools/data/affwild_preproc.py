@@ -17,7 +17,7 @@ def mrlines(fname, sp='\n'):
 
 eps = 1e-3
 
-def parse_keypoints(json_path, joints):
+def parse_keypoints(json_path, joints, score):
     try:        
         # Parse the JSON string
         with open(json_path) as f:
@@ -27,15 +27,17 @@ def parse_keypoints(json_path, joints):
         # Iterate over the elements in the keypoints array
         for i in range(0, len(keypoints), 3):
             # Split the string into a list of three strings
-            triplet = keypoints[i:i+3]
+            doublet = keypoints[i:i+2]
+            v = keypoints[i+2:i+3]
             # Remove commas from each string
             #triplet = [val.strip(',') for val in triplet]
             # Convert each string to a float
-            x, y, c = triplet #[float(val) for val in triplet]
+            x, y = doublet #[float(val) for val in triplet]
             # Assign the resulting values to the joints array
-            joints[i//3] = [x, y, c]
+            joints[i//3] = [x, y]
+            score[i//3] = [v]
 
-        return joints
+        return joints, score
     except (ValueError, IndexError, KeyError) as e:
         # If an exception is raised, return the original joints array
         return joints
@@ -53,7 +55,7 @@ def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/d
         lines = mrlines(ske_file)
         idx = 0
         num_frames = 1 #int(lines[0])
-        num_joints = len(keypoints)//3
+        num_joints = 133
         #idx += 1
 
         fidx = 0
@@ -72,8 +74,9 @@ def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/d
                 #idx += 1
                 #assert int(lines[idx]) == 90
                 #idx += 1
-                joints = np.zeros((num_joints, 3), dtype=np.float32)
-                joints = parse_keypoints(ske_file, joints)
+                joints = np.zeros((num_joints, 2), dtype=np.float32)
+                score = np.zeros((num_joints, 1), dtype=np.float32)
+                joints, score = parse_keypoints(ske_file, joints, score)
 
                 # for j in range(num_joints):
                 #     line = lines[idx].split()
@@ -82,11 +85,13 @@ def parse_skeleton_file(ske_name, root='/home/trentini/face-skeleton-detection/d
                 #     print(joints[j, :3], flush=True)
                 #     idx += 1
                 body_data[bodyID]['kpt'].append(joints)
+                body_data[bodyID]['keypoint_score'].append(score)
             fidx += 1
 
         for k in body_data:
             body_data[k]['motion'] = np.sum(np.var(np.vstack(body_data[k]['kpt']), axis=0))
             body_data[k]['kpt'] = np.stack(body_data[k]['kpt'])
+            body_data[k]['keypoint_score'] = np.stack(body_data[k]['keypoint_score'])
 
         #assert idx == len(lines)
         return body_data
