@@ -49,7 +49,7 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
                  data_prefix='',
                  test_mode=False,
                  multi_class=True,
-                 num_classes=None,
+                 num_classes=12,
                  start_index=1,
                  modality='RGB',
                  memcached=False,
@@ -115,7 +115,9 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         #         #fino a qui
         label = np.array(label)
         label = label.astype(int)
+        print(label, flush=True)
         arr = np.zeros(num, dtype=np.float32)
+        print(arr, flush=True)
         arr[label] = 1.
         return arr
 
