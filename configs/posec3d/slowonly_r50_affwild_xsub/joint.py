@@ -1,7 +1,7 @@
 model = dict(
     type='Recognizer2D',
     backbone=dict(
-        type='ResNet2dSlowOnly',
+        type='ResNet',
         in_channels=133,
         base_channels=32,
         num_stages=3,
