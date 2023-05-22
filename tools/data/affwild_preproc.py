@@ -35,7 +35,7 @@ def parse_keypoints(json_path, joints, score):
             x, y = doublet #[float(val) for val in triplet]
             # Assign the resulting values to the joints array
             joints[i//3] = [x, y]
-            score[i//3] = [v]
+            score[i//3] = v
 
         return joints, score
     except (ValueError, IndexError, KeyError) as e:
