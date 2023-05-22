@@ -40,7 +40,7 @@ def parse_keypoints(json_path, joints, score):
         return joints, score
     except (ValueError, IndexError, KeyError) as e:
         # If an exception is raised, return the original joints array
-        print('qui fa errore parse kps', flush=True)
+        print('error in parse keypoints for the following file', flush=True)
         print(ske_file, flush=True)
         return joints
 
@@ -100,7 +100,7 @@ def parse_skeleton_file(ske_name, root): #='/home/trentini/face-skeleton-detecti
         return body_data
     except (ValueError, IndexError, KeyError) as e:
         # If an exception is raised, return the original joints array
-        print('qui fa errore ', flush=True)
+        print('error in parse_skeleton_files for the following file', flush=True)
         print(ske_file, flush=True)
         return body_data
 
