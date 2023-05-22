@@ -89,7 +89,7 @@ class SimpleHead(BaseHead):
                 x = x.reshape(N, M, C)
                 x = x.mean(dim=1)
         print('x.shape[1]', flush=True)
-        print(x.shape[1], flush=True)
+        print(x.shape, flush=True)
         print('self.in_c', flush=True)
         print(self.in_c, flush=True)
         assert x.shape[1] == self.in_c
@@ -118,24 +118,6 @@ class I3DHead(SimpleHead):
                          mode='3D',
                          **kwargs)
         
-@HEADS.register_module()
-class I2DHead(SimpleHead):
-
-    def __init__(self,
-                 num_classes,
-                 in_channels,
-                 loss_cls=dict(type='CrossEntropyLoss'),
-                 dropout=0.5,
-                 init_std=0.01,
-                 **kwargs):
-        super().__init__(num_classes,
-                         in_channels,
-                         loss_cls=loss_cls,
-                         dropout=dropout,
-                         init_std=init_std,
-                         mode='2D',
-                         **kwargs)
-
 
 @HEADS.register_module()
 class SlowFastHead(I3DHead):
