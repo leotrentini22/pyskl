@@ -170,7 +170,13 @@ def f1_score(scores, labels, val_weight=None):
     f1_score_list = []
     len_list=0
     thresh = 0.5
+    print('scores', flush=True)
+    print(scores, flush=True)
+    print('labels', flush=True)
+    print(labels, flush=True)
     statistics_list = statistics(scores, labels, thresh)
+    print('statistics_list', flush=True)
+    print(statistics_list, flush=True)
 
     for i in range(len(statistics_list)):
         TP = statistics_list[i]['TP']
