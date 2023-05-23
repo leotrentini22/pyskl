@@ -190,7 +190,8 @@ def f1_score(scores, labels, val_weight=None):
             f1_score_list.append(f1_score)
             len_list = len_list+1
     mean_f1_score = sum(f1_score_list) / len_list
-
+    
+    print(mean_f1_score, flush=True)
     return mean_f1_score #, f1_score_list
 
 
@@ -259,6 +260,8 @@ def binary_precision_recall_curve(y_score, y_true):
     """
     assert isinstance(y_score, np.ndarray)
     assert isinstance(y_true, np.ndarray)
+    print(y_score.shape, flush=True)
+    print(y_true.shape, flush=True)
     assert y_score.shape == y_true.shape
 
     # make y_true a boolean vector
