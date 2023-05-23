@@ -134,7 +134,7 @@ def statistics(pred, y, thresh):
     # print(y, flush=True)
     batch_size = len(pred) #pred.size(0)
     class_nb = len(pred[0]) #pred.size(1)
-    pred = [arr >= threshold for arr in pred]
+    pred = [arr >= thresh for arr in pred]
     pred = [[int(element) for element in inner] for inner in pred] #[arr.astype(np.long) for arr in pred]
     statistics_list = []
     for j in range(class_nb):
