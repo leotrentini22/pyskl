@@ -123,8 +123,10 @@ def mean_class_accuracy(scores, labels):
 
 
 def statistics(pred, y, thresh):
-    batch_size = len(pred) #pred.size(0)
-    class_nb = len(pred[0]) #pred.size(1)
+    pred=torch.tensor(pred)
+    y=torch.tensor(y)
+    batch_size = pred.size(0)
+    class_nb = pred.size(1)
     pred = pred >= thresh
     pred = pred.long()
     statistics_list = []
