@@ -6,7 +6,7 @@ import torch
 
 class DistEvalHook(BasicDistEvalHook):
     greater_keys = [
-        'acc', 'top', 'AR@', 'auc', 'precision', 'mAP@', 'Recall@'
+        'acc', 'top', 'AR@', 'auc', 'precision', 'mAP@', 'Recall@', 'f1_score'
     ]
     less_keys = ['loss']
 
