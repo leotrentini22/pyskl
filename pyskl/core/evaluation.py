@@ -234,7 +234,7 @@ def mean_average_precision(scores, labels):
     labels = np.stack(labels).T
 
     for score, label in zip(scores, labels):
-        label = np.reshape(label, (1, -1))
+        score = np.reshape(score, (-1,))
         precision, recall, _ = binary_precision_recall_curve(score, label)
         ap = -np.sum(np.diff(recall) * np.array(precision)[:-1])
         results.append(ap)
