@@ -124,8 +124,14 @@ def mean_class_accuracy(scores, labels):
 
 
 def statistics(pred, y, thresh):
+    print('pred prima della trasf in tensore', flush=True)
+    print(pred, flush=True)
     pred=torch.tensor(pred)
     y=torch.tensor(y)
+    print('pred', flush=True)
+    print(pred, flush=True)
+    print('y', flush=True)
+    print(y, flush=True)
     batch_size = pred.size(0)
     class_nb = pred.size(1)
     pred = pred >= thresh
