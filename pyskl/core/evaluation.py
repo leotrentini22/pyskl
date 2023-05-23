@@ -124,20 +124,11 @@ def mean_class_accuracy(scores, labels):
 
 
 def statistics(pred, y, thresh):
-    # print('pred prima della trasf in tensore', flush=True)
-    # print(pred, flush=True)
-    # pred=torch.tensor(pred)
-    # y=torch.tensor(y)
-    # print('pred', flush=True)
-    # print(pred, flush=True)
-    # print('y', flush=True)
-    # print(y, flush=True)
     batch_size = len(pred) #pred.size(0)
     class_nb = len(pred[0]) #pred.size(1)
     pred = np.array(pred)
     pred = pred >= thresh # [arr >= thresh for arr in pred]
     pred = pred.astype(int)
-    #pred = [[int(element) for element in inner] for inner in pred] #[arr.astype(np.long) for arr in pred]
     statistics_list = []
     for j in range(class_nb):
         TP = 0
@@ -145,17 +136,17 @@ def statistics(pred, y, thresh):
         FN = 0
         TN = 0
         for i in range(batch_size):
-            if pred[i][j] == 1:
-                if y[i][j] == 1:
+            if np.any(pred[i][j] == 1):
+                if np.any(y[i][j] == 1):
                     TP += 1
-                elif y[i][j] == 0:
+                elif np.any(y[i][j] == 0):
                     FP += 1
                 else:
                     continue
-            elif pred[i][j] == 0:
-                if y[i][j] == 1:
+            elif np.any(pred[i][j] == 0):
+                if np.any(y[i][j] == 1):
                     FN += 1
-                elif y[i][j] == 0:
+                elif np.any(y[i][j] == 0):
                     TN += 1
                 else:
                     continue
