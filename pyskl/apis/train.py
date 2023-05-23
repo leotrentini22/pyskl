@@ -9,7 +9,7 @@ from mmcv.engine import multi_gpu_test
 from mmcv.parallel import MMDistributedDataParallel
 from mmcv.runner import DistSamplerSeedHook, EpochBasedRunner, OptimizerHook, build_optimizer, get_dist_info
 
-from ..core import DistEvalHook
+from ..core import DistEvalHook2
 from ..datasets import build_dataloader, build_dataset
 from ..utils import cache_checkpoint, get_root_logger
 
@@ -132,7 +132,7 @@ def train_model(model,
         dataloader_setting = dict(dataloader_setting,
                                   **cfg.data.get('val_dataloader', {}))
         val_dataloader = build_dataloader(val_dataset, **dataloader_setting)
-        eval_hook = DistEvalHook(val_dataloader, **eval_cfg)
+        eval_hook = DistEvalHook2(val_dataloader, **eval_cfg)
         runner.register_hook(eval_hook)
 
     if cfg.get('resume_from', None):

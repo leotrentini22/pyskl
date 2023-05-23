@@ -231,9 +231,9 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
                     self.label2array(self.num_classes, label)
                     for label in gt_labels
                 ]
-                mAP = f1_score(results, gt_labels_arrays)
-                eval_results['f1_score'] = mAP
-                log_msg = f'\nf1_score\t{mAP:.4f}'
+                f1 = f1_score(results, gt_labels_arrays)
+                eval_results['f1_score'] = f1
+                log_msg = f'\nf1_score\t{f1:.4f}'
                 print_log(log_msg, logger=logger)
                 continue
 

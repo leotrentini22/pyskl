@@ -4,7 +4,7 @@ from mmcv.runner import DistEvalHook as BasicDistEvalHook
 import torch
 
 
-class DistEvalHook(BasicDistEvalHook):
+class DistEvalHook2(BasicDistEvalHook):
     greater_keys = [
         'acc', 'top', 'AR@', 'auc', 'precision', 'mAP@', 'Recall@', 'f1_score', 'f1'
     ]
