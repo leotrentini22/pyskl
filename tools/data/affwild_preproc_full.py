@@ -293,7 +293,7 @@ file_count=[]
 if num_process == 1:
     # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
     it = 0
-    for name in tqdm(range(400000)): # MORE OR LESS 400k json in train dataset (not sure it is complete dataset)
+    for name in tqdm(range(100000)): # MORE OR LESS 400k json in train dataset (not sure it is complete dataset)
         labels = get_labels(it, root)
         file_json = get_json(it, root)
         anno_dict[file_json] = gen_anno(file_json, labels)
@@ -321,7 +321,7 @@ names_val = skeleton_files
 if num_process == 1:
     # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
     it = 0
-    for name in tqdm(range(250000)): # MORE OR LESS 250k json in validation dataset (not sure it is complete dataset)
+    for name in tqdm(range(20000)): # MORE OR LESS 250k json in validation dataset (not sure it is complete dataset)
         labels = get_labels(it, root)
         file_json = get_json(it, root)
         anno_dict[file_json] = gen_anno(file_json, labels)
