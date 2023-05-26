@@ -76,4 +76,4 @@ checkpoint_config = dict(interval=1)
 evaluation = dict(interval=1, metrics=['f1_score', 'mean_average_precision']) #, topk=(1, 5))
 log_config = dict(interval=20, hooks=[dict(type='TextLoggerHook')])
 log_level = 'INFO'
-work_dir = './work_dirs/posec3d/slowonly_r50_affwild_xsub/joint'
+work_dir = './work_dirs/posec3d/slowonly_r50_affwild_xsub_full/joint'
