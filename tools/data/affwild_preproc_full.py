@@ -44,7 +44,7 @@ def parse_keypoints(json_path, joints, score):
         # If an exception is raised, return the original joints array
         print('error in parse keypoints for the following file', flush=True)
         print(ske_file, flush=True)
-        return joints
+        return None
 
 
 def parse_skeleton_file(ske_name, root): #='/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
@@ -82,6 +82,8 @@ def parse_skeleton_file(ske_name, root): #='/home/trentini/face-skeleton-detecti
                 joints = np.zeros((num_joints, 2), dtype=np.float32)
                 score = np.zeros((num_joints, 1), dtype=np.float32)
                 joints, score = parse_keypoints(ske_file, joints, score)
+                if joints is None:
+                    return None
 
                 # for j in range(num_joints):
                 #     line = lines[idx].split()
@@ -104,7 +106,7 @@ def parse_skeleton_file(ske_name, root): #='/home/trentini/face-skeleton-detecti
         # If an exception is raised, return the original joints array
         print('error in parse_skeleton_files for the following file', flush=True)
         print(ske_file, flush=True)
-        return body_data
+        return None
 
 
 def spread_denoising(body_data_list):
@@ -296,8 +298,10 @@ if num_process == 1:
     for name in tqdm(range(100000)): # MORE OR LESS 400k json in train dataset (not sure it is complete dataset)
         labels = get_labels(it, root)
         file_json = get_json(it, root)
-        anno_dict[file_json] = gen_anno(file_json, labels)
-        file_count.append(file_json)
+        diction = gen_anno(file_json, labels)
+        if diction is not None:
+            anno_dict[file_json] = diction
+            file_count.append(file_json)
         it += 1
 else:
     pool = mp.Pool(num_process)
@@ -334,7 +338,7 @@ else:
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-names_test = [x for x in names_val if anno_dict is not None]
+names_val = [x for x in names_val if anno_dict is not None]
 
 
 
