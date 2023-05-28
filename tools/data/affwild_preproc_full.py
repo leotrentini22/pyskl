@@ -44,7 +44,7 @@ def parse_keypoints(json_path, joints, score):
         # If an exception is raised, return the original joints array
         print('error in parse keypoints for the following file', flush=True)
         print(ske_file, flush=True)
-        return None
+        return joints, score
 
 
 def parse_skeleton_file(ske_name, root): #='/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Train_Set'):
@@ -106,7 +106,7 @@ def parse_skeleton_file(ske_name, root): #='/home/trentini/face-skeleton-detecti
         # If an exception is raised, return the original joints array
         print('error in parse_skeleton_files for the following file', flush=True)
         print(ske_file, flush=True)
-        return None
+        return body_data
 
 
 def spread_denoising(body_data_list):
@@ -299,9 +299,8 @@ if num_process == 1:
         labels = get_labels(it, root)
         file_json = get_json(it, root)
         diction = gen_anno(file_json, labels)
-        if diction is not None:
-            anno_dict[file_json] = diction
-            file_count.append(file_json)
+        anno_dict[file_json] = diction
+        file_count.append(file_json)
         it += 1
 else:
     pool = mp.Pool(num_process)
