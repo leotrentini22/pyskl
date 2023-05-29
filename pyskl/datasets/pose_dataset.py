@@ -95,7 +95,7 @@ class PoseDataset(BaseDataset):
             split, data = data['split'], data['annotations']
             identifier = 'filename' if 'filename' in data[0] else 'frame_dir'
             split = set(split[self.split])
-            data = [x for x in data if x[identifier] in split]
+            data = [x for x in data if x is not None and x[identifier] in split]
 
         for item in data:
             # Sometimes we may need to load anno from the file
