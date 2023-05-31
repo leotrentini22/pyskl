@@ -19,7 +19,7 @@
 
 ## General Information
 
-The repository contains the code and report for the second part of the Facial Action Unit Recognition project. In particular, this repository is an adaption of [PoseConv3D](https://arxiv.org/abs/2104.13586), a general action recognition algorithm that we get from PYSKL, on the face action units recognition task.
+The repository contains the code for the second part of the Facial Action Unit Recognition project. In particular, this repository is an adaption of [PoseConv3D](https://arxiv.org/abs/2104.13586), a general action recognition algorithm that we get from PYSKL, on the face action units recognition task.
 
 PYSKL is a toolbox focusing on action recognition based on **SK**e**L**eton data with **PY**Torch. It supports various algorithms for skeleton-based action recognition. PYSKL is based on the OpenSource Project [MMAction2](https://github.com/open-mmlab/mmaction2).
 
