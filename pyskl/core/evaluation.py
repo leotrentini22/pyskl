@@ -130,6 +130,7 @@ def statistics(pred, y, thresh):
     pred = pred >= thresh # [arr >= thresh for arr in pred]
     pred = pred.astype(int)
     statistics_list = []
+    y = np.array(y)
     for j in range(class_nb):
         TP = 0
         FP = 0
@@ -171,8 +172,6 @@ def f1_score(scores, labels, val_weight=None):
     len_list=0
     thresh = 0.5
     statistics_list = statistics(scores, labels, thresh)
-    print('statistics_list', flush=True)
-    print(statistics_list, flush=True)
 
     for i in range(len(statistics_list)):
         TP = statistics_list[i]['TP']
@@ -192,7 +191,7 @@ def f1_score(scores, labels, val_weight=None):
             f1_score_list.append(f1_score)
             len_list = len_list+1
     mean_f1_score = sum(f1_score_list) / len_list
-    
+    print(f1_score_list, flush=True)
     return mean_f1_score
 
 
