@@ -61,7 +61,7 @@ def parse_args():
     parser.add_argument('out_filename', help='output filename')
     parser.add_argument(
         '--config',
-        default='configs/posec3d/slowonly_r50_ntu120_xsub/joint.py',
+        default='configs/posec3d/slowonly_r50_affwild_xsub/joint.py',
         help='skeleton action recognition config file path')
     parser.add_argument(
         '--checkpoint',

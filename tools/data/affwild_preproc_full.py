@@ -227,7 +227,7 @@ def gen_anno(name, labels):
     if len(body_data) == 0:
         return None
     keypoint = gen_keypoint_array(body_data).astype(np.float16)
-    label = labels #int(name.split('A')[-1]) - 1
+    label = labels 
     total_frames = 1 #keypoint.shape[1]
     img_shape = (256,256)
     original_shape = img_shape
@@ -293,9 +293,8 @@ num_process = 1
 file_count=[]
 
 if num_process == 1:
-    # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
-    it = 0
-    for name in tqdm(range(100000)): # MORE OR LESS 400k json in train dataset (not sure it is complete dataset)
+    # Each annotations has 7 keys: frame_dir, label, keypoint, total_frames, img_shape, original_shape, keypoint_score
+    for name in tqdm(range(100000)): # MORE OR LESS 400k json in train dataset (seems not complete dataset)
         labels = get_labels(it, root)
         file_json = get_json(it, root)
         diction = gen_anno(file_json, labels)
@@ -322,9 +321,9 @@ names_val = skeleton_files
 
 
 if num_process == 1:
-    # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
+    # Each annotations has 7 keys: frame_dir, label, keypoint, total_frames, img_shape, original_shape, keypoint_score
     it = 0
-    for name in tqdm(range(20000)): # MORE OR LESS 250k json in validation dataset (not sure it is complete dataset)
+    for name in tqdm(range(20000)): # MORE OR LESS 250k json in validation dataset (seems not complete dataset)
         labels = get_labels(it, root)
         file_json = get_json(it, root)
         anno_dict[file_json] = gen_anno(file_json, labels)
@@ -340,12 +339,10 @@ else:
 names_val = [x for x in names_val if anno_dict is not None]
 
 
-
-#names = [name for name in names if int(name.split('A')[-1]) <= 60]
 xsub_train = [name for name in names_train]
 xsub_val = [name for name in names_val]
 # xview_train = [name for name in names if 'C001' not in name]
 # xview_val = [name for name in names if 'C001' in name]
-split = dict(xsub_train=xsub_train, xsub_val=xsub_val) #xsub_train=xsub_train, xsub_val=xsub_val, xview_train=xview_train, xview_val=xview_val)
+split = dict(xsub_train=xsub_train, xsub_val=xsub_val) #xview_train=xview_train, xview_val=xview_val)
 annotations = [anno_dict[name] for name in file_count] #names]
 dump(dict(split=split, annotations=annotations), 'AffWild_train_full.pkl')
