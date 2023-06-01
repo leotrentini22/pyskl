@@ -246,47 +246,69 @@ def mean_average_precision(scores, labels):
         return np.nan
     return np.mean(results)
 
-
 def f1_score(scores, labels):
-    """f1_score for multi-label recognition.
+    """Calculate F1 score for multi-label recognition.
 
     Args:
-        scores (list[np.ndarray]): Prediction scores of different classes for
-            each sample.
-        labels (list[np.ndarray]): Ground truth many-hot vector for each
-            sample.
+        scores (np.ndarray): Prediction scores of different classes for each sample.
+        labels (np.ndarray): Ground truth many-hot vector for each sample.
 
     Returns:
-        np.float: The mean f1_score.
+        np.float: The mean F1 score.
     """
-    results = []
-    scores = np.stack(scores).T
-    labels = np.stack(labels).T
-    threshold = 0.5
+    scores_thresholded = np.where(scores >= 0.5, 1, 0)
+    labels_thresholded = np.where(scores >= 0.5, 1, 0)
 
-    for score, label in zip(scores, labels):
-        score = np.reshape(score, (-1,))
-        precision, recall, threshold_vect = binary_precision_recall_curve(score, label)
-        print("threshold_vect", flush=True)
-        print(threshold_vect, flush=True)
-        threshold_indices = np.where(threshold_vect >= threshold)[0]
-        print("threshold_indices", flush=True)
-        print(threshold_indices, flush=True)
-        if threshold_indices.size == 0:
-            continue
-        last_index = threshold_indices[-1]
-        precision_at_threshold = precision[last_index]
-        print("precision_at_threshold", flush=True)
-        print(precision_at_threshold, flush=True)
-        recall_at_threshold = recall[last_index]
-        print("recall_at_threshold", flush=True)
-        print(recall_at_threshold, flush=True)
-        f1 = 2 * precision_at_threshold * recall_at_threshold / (precision_at_threshold + recall_at_threshold + 1e-15)
-        results.append(f1)
-    results = [x for x in results if not np.isnan(x)]
-    if results == []:
-        return np.nan
-    return np.mean(results)
+    TP = np.sum(np.logical_and(scores_thresholded == 1, labels == 1))
+    FP = np.sum(np.logical_and(scores_thresholded == 1, labels == 0))
+    FN = np.sum(np.logical_and(scores_thresholded == 0, labels == 1))
+
+    precision = TP / (TP + FP + 1e-20)
+    recall = TP / (TP + FN + 1e-20)
+    f1 = 2 * precision * recall / (precision + recall + 1e-20)
+
+    return f1
+
+# def f1_score(scores, labels):
+#     """f1_score for multi-label recognition.
+
+#     Args:
+#         scores (list[np.ndarray]): Prediction scores of different classes for
+#             each sample.
+#         labels (list[np.ndarray]): Ground truth many-hot vector for each
+#             sample.
+
+#     Returns:
+#         np.float: The mean f1_score.
+#     """
+#     results = []
+#     scores = np.stack(scores).T
+#     labels = np.stack(labels).T
+#     threshold = 0.5
+
+#     for score, label in zip(scores, labels):
+#         score = np.reshape(score, (-1,))
+#         precision, recall, threshold_vect = binary_precision_recall_curve(score, label)
+#         print("threshold_vect", flush=True)
+#         print(threshold_vect, flush=True)
+#         threshold_indices = np.where(threshold_vect >= threshold)[0]
+#         print("threshold_indices", flush=True)
+#         print(threshold_indices, flush=True)
+#         if threshold_indices.size == 0:
+#             continue
+#         last_index = threshold_indices[-1]
+#         precision_at_threshold = precision[last_index]
+#         print("precision_at_threshold", flush=True)
+#         print(precision_at_threshold, flush=True)
+#         recall_at_threshold = recall[last_index]
+#         print("recall_at_threshold", flush=True)
+#         print(recall_at_threshold, flush=True)
+#         f1 = 2 * precision_at_threshold * recall_at_threshold / (precision_at_threshold + recall_at_threshold + 1e-15)
+#         results.append(f1)
+#     results = [x for x in results if not np.isnan(x)]
+#     if results == []:
+#         return np.nan
+#     return np.mean(results)
 
 
 def binary_precision_recall_curve(y_score, y_true):
