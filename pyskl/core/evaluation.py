@@ -168,6 +168,10 @@ def f1_score(scores, labels, val_weight=None):
     Returns:
         Mean f1 score, f1 score list.
     """    
+    print("scores", flush=True)
+    print(scores, flush=True)
+    print("labels", flush=True)
+    print(labels, flush=True)
     f1_score_list = []
     len_list=0
     thresh = 0.5
@@ -191,10 +195,6 @@ def f1_score(scores, labels, val_weight=None):
             f1_score_list.append(f1_score)
             len_list = len_list+1
     mean_f1_score = sum(f1_score_list) / len_list
-    print("f1_score_list")
-    print(f1_score_list, flush=True)
-    print("mean_f1_score")
-    print(mean_f1_score, flush=True)
     return mean_f1_score
 
 
