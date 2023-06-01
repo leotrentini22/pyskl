@@ -233,6 +233,10 @@ def mean_average_precision(scores, labels):
         np.float: The mean average precision.
     """
     results = []
+    print("scores", flush=True)
+    print(scores, flush=True)
+    print("labels", flush=True)
+    print(labels, flush=True)
     scores = np.stack(scores).T
     labels = np.stack(labels).T
 
@@ -266,7 +270,7 @@ def f1_score(scores, labels):
     for score, label in zip(scores, labels):
         score = np.reshape(score, (-1,))
         precision, recall, _ = binary_precision_recall_curve(score, label)
-        ap = f1_score = 2 * precision * recall / (precision + recall + 1e-20)
+        ap = 2 * precision * recall / (precision + recall + 1e-20)
         results.append(ap)
     results = [x for x in results if not np.isnan(x)]
     if results == []:
