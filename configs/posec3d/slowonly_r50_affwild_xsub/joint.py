@@ -20,7 +20,12 @@ model = dict(
     test_cfg=dict(average_clips=None))  #to skip the softmax
 
 dataset_type = 'PoseDataset'
+
+
+### CHANGE HERE THE PATH OF THE ANNOTATION FILE
 ann_file = '/home/trentini/pyskl/tools/data/AffWild_train.pkl'
+
+
 left_kp = [] #[1, 3, 5, 7, 9, 11, 13, 15]
 right_kp = [] #[2, 4, 6, 8, 10, 12, 14, 16]
 train_pipeline = [

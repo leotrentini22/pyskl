@@ -157,45 +157,45 @@ def statistics(pred, y, thresh):
     return statistics_list
 
 
-def f1_score(scores, labels, val_weight=None):
-    """Calculate f1 score for multi-class recognition.
+# def f1_score(scores, labels, val_weight=None):
+#     """Calculate f1 score for multi-class recognition.
 
-    Args:
-        scores (list[np.ndarray]): Prediction scores for each class.
-        labels (list[np.ndarray]): Ground truth many-hot vector for each
-            sample.
+#     Args:
+#         scores (list[np.ndarray]): Prediction scores for each class.
+#         labels (list[np.ndarray]): Ground truth many-hot vector for each
+#             sample.
 
-    Returns:
-        Mean f1 score, f1 score list.
-    """    
-    print("scores", flush=True)
-    print(scores, flush=True)
-    print("labels", flush=True)
-    print(labels, flush=True)
-    f1_score_list = []
-    len_list=0
-    thresh = 0.5
-    statistics_list = statistics(scores, labels, thresh)
+#     Returns:
+#         Mean f1 score, f1 score list.
+#     """    
+#     print("scores", flush=True)
+#     print(scores, flush=True)
+#     print("labels", flush=True)
+#     print(labels, flush=True)
+#     f1_score_list = []
+#     len_list=0
+#     thresh = 0.5
+#     statistics_list = statistics(scores, labels, thresh)
 
-    for i in range(len(statistics_list)):
-        TP = statistics_list[i]['TP']
-        FP = statistics_list[i]['FP']
-        FN = statistics_list[i]['FN']
+#     for i in range(len(statistics_list)):
+#         TP = statistics_list[i]['TP']
+#         FP = statistics_list[i]['FP']
+#         FN = statistics_list[i]['FN']
 
-        precise = TP / (TP + FP + 1e-20)
-        recall = TP / (TP + FN + 1e-20)
-        f1_score = 2 * precise * recall / (precise + recall + 1e-20)
-        if val_weight is not None:
-            if (val_weight[i]>0):
-                f1_score_list.append(f1_score)
-                len_list = len_list+1
-            else: 
-                f1_score_list.append(f1_score*0)
-        else:
-            f1_score_list.append(f1_score)
-            len_list = len_list+1
-    mean_f1_score = sum(f1_score_list) / len_list
-    return mean_f1_score
+#         precise = TP / (TP + FP + 1e-20)
+#         recall = TP / (TP + FN + 1e-20)
+#         f1_score = 2 * precise * recall / (precise + recall + 1e-20)
+#         if val_weight is not None:
+#             if (val_weight[i]>0):
+#                 f1_score_list.append(f1_score)
+#                 len_list = len_list+1
+#             else: 
+#                 f1_score_list.append(f1_score*0)
+#         else:
+#             f1_score_list.append(f1_score)
+#             len_list = len_list+1
+#     mean_f1_score = sum(f1_score_list) / len_list
+#     return mean_f1_score
 
 
 def top_k_accuracy(scores, labels, topk=(1, )):
@@ -240,6 +240,33 @@ def mean_average_precision(scores, labels):
         score = np.reshape(score, (-1,))
         precision, recall, _ = binary_precision_recall_curve(score, label)
         ap = -np.sum(np.diff(recall) * np.array(precision)[:-1])
+        results.append(ap)
+    results = [x for x in results if not np.isnan(x)]
+    if results == []:
+        return np.nan
+    return np.mean(results)
+
+
+def f1_score(scores, labels):
+    """f1_score for multi-label recognition.
+
+    Args:
+        scores (list[np.ndarray]): Prediction scores of different classes for
+            each sample.
+        labels (list[np.ndarray]): Ground truth many-hot vector for each
+            sample.
+
+    Returns:
+        np.float: The mean f1_score.
+    """
+    results = []
+    scores = np.stack(scores).T
+    labels = np.stack(labels).T
+
+    for score, label in zip(scores, labels):
+        score = np.reshape(score, (-1,))
+        precision, recall, _ = binary_precision_recall_curve(score, label)
+        ap = f1_score = 2 * precision * recall / (precision + recall + 1e-20)
         results.append(ap)
     results = [x for x in results if not np.isnan(x)]
     if results == []:
