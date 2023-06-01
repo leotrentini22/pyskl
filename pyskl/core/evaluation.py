@@ -233,10 +233,6 @@ def mean_average_precision(scores, labels):
         np.float: The mean average precision.
     """
     results = []
-    print("scores", flush=True)
-    print(scores, flush=True)
-    print("labels", flush=True)
-    print(labels, flush=True)
     scores = np.stack(scores).T
     labels = np.stack(labels).T
 
@@ -264,14 +260,22 @@ def f1_score(scores, labels):
         np.float: The mean f1_score.
     """
     results = []
+    print("scores", flush=True)
+    print(scores, flush=True)
+    print("labels", flush=True)
+    print(labels, flush=True)
     scores = np.stack(scores).T
     labels = np.stack(labels).T
+    threshold = 0.5
 
     for score, label in zip(scores, labels):
         score = np.reshape(score, (-1,))
         precision, recall, _ = binary_precision_recall_curve(score, label)
-        ap = 2 * precision * recall / (precision + recall + 1e-20)
-        results.append(ap)
+        threshold_indices = score >= threshold
+        precision_at_threshold = precision[threshold_indices][-1]
+        recall_at_threshold = recall[threshold_indices][-1]
+        f1 = 2 * precision_at_threshold * recall_at_threshold / (precision_at_threshold + recall_at_threshold + 1e-20)
+        results.append(f1)
     results = [x for x in results if not np.isnan(x)]
     if results == []:
         return np.nan
