@@ -256,12 +256,14 @@ def f1_score(scores, labels):
     Returns:
         np.float: The mean F1 score.
     """
+    scores = np.array(scores)
+    labels = np.array(labels)
     scores_thresholded = np.where(scores >= 0.5, 1, 0)
-    labels_thresholded = np.where(scores >= 0.5, 1, 0)
+    labels_thresholded = np.where(labels >= 0.5, 1, 0)
 
-    TP = np.sum(np.logical_and(scores_thresholded == 1, labels == 1))
-    FP = np.sum(np.logical_and(scores_thresholded == 1, labels == 0))
-    FN = np.sum(np.logical_and(scores_thresholded == 0, labels == 1))
+    TP = np.sum(np.logical_and(scores_thresholded == 1, labels_thresholded == 1))
+    FP = np.sum(np.logical_and(scores_thresholded == 1, labels_thresholded == 0))
+    FN = np.sum(np.logical_and(scores_thresholded == 0, labels_thresholded == 1))
 
     precision = TP / (TP + FP + 1e-20)
     recall = TP / (TP + FN + 1e-20)
