@@ -270,8 +270,8 @@ def f1_score(scores, labels):
 
     for score, label in zip(scores, labels):
         score = np.reshape(score, (-1,))
-        precision, recall, _ = binary_precision_recall_curve(score, label)
-        threshold_indices = np.where(score >= threshold)[0]
+        precision, recall, threshold_vect = binary_precision_recall_curve(score, label)
+        threshold_indices = np.where(threshold_vect >= threshold)[0]
         if threshold_indices.size == 0:
             continue
         last_index = threshold_indices[-1]
