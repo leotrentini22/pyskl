@@ -259,9 +259,15 @@ def f1_score(scores, labels):
     scores = np.array(scores)
     labels = np.array(labels)
     scores_thresholded = np.where(scores >= 0.5, 1, 0)
+    print("scores_thresholded", flush=True)
+    print(scores_thresholded, flush=True)
     labels_thresholded = np.where(labels >= 0.5, 1, 0)
+    print("labels_thresholded", flush=True)
+    print(labels_thresholded, flush=True)
 
     TP = np.sum(np.logical_and(scores_thresholded == 1, labels_thresholded == 1))
+    print("TP", flush=True)
+    print(TP, flush=True)
     FP = np.sum(np.logical_and(scores_thresholded == 1, labels_thresholded == 0))
     FN = np.sum(np.logical_and(scores_thresholded == 0, labels_thresholded == 1))
 
