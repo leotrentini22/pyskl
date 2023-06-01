@@ -260,10 +260,6 @@ def f1_score(scores, labels):
         np.float: The mean f1_score.
     """
     results = []
-    print("scores", flush=True)
-    print(scores, flush=True)
-    print("labels", flush=True)
-    print(labels, flush=True)
     scores = np.stack(scores).T
     labels = np.stack(labels).T
     threshold = 0.5
@@ -271,13 +267,21 @@ def f1_score(scores, labels):
     for score, label in zip(scores, labels):
         score = np.reshape(score, (-1,))
         precision, recall, threshold_vect = binary_precision_recall_curve(score, label)
+        print("threshold_vect", flush=True)
+        print(threshold_vect, flush=True)
         threshold_indices = np.where(threshold_vect >= threshold)[0]
+        print("threshold_indices", flush=True)
+        print(threshold_indices, flush=True)
         if threshold_indices.size == 0:
             continue
         last_index = threshold_indices[-1]
         precision_at_threshold = precision[last_index]
+        print("precision_at_threshold", flush=True)
+        print(precision_at_threshold, flush=True)
         recall_at_threshold = recall[last_index]
-        f1 = 2 * precision_at_threshold * recall_at_threshold / (precision_at_threshold + recall_at_threshold + 1e-20)
+        print("recall_at_threshold", flush=True)
+        print(recall_at_threshold, flush=True)
+        f1 = 2 * precision_at_threshold * recall_at_threshold / (precision_at_threshold + recall_at_threshold + 1e-15)
         results.append(f1)
     results = [x for x in results if not np.isnan(x)]
     if results == []:
