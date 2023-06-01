@@ -271,9 +271,12 @@ def f1_score(scores, labels):
     for score, label in zip(scores, labels):
         score = np.reshape(score, (-1,))
         precision, recall, _ = binary_precision_recall_curve(score, label)
-        threshold_indices = score >= threshold
-        precision_at_threshold = precision[threshold_indices][-1]
-        recall_at_threshold = recall[threshold_indices][-1]
+        threshold_indices = np.where(score >= threshold)[0]
+        if threshold_indices.size == 0:
+            continue
+        last_index = threshold_indices[-1]
+        precision_at_threshold = precision[last_index]
+        recall_at_threshold = recall[last_index]
         f1 = 2 * precision_at_threshold * recall_at_threshold / (precision_at_threshold + recall_at_threshold + 1e-20)
         results.append(f1)
     results = [x for x in results if not np.isnan(x)]
