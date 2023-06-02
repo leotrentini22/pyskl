@@ -240,7 +240,8 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
                 gt_labels_arrays = gt_labels_arrays.astype(int)
                 results = np.concatenate(results)
                 gt_labels_arrays = np.concatenate(gt_labels_arrays)
-
+                print(np.shape(results), flush=True)
+                print(np.shape(gt_labels_arrays), flush=True)
                 f1 = f1_score(results, gt_labels_arrays)
                 eval_results['f1_score'] = f1*100.
                 log_msg = f'\nf1_score\t{f1:.4f}'
