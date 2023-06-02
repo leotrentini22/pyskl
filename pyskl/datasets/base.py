@@ -232,6 +232,12 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
                     self.label2array(self.num_classes, label)
                     for label in gt_labels
                 ]
+                results = np.array(results)
+                results = results >= 0.5 #threshold
+                results = results.astype(int)
+                gt_labels_arrays = np.array(gt_labels_arrays)
+                gt_labels_arrays = gt_labels_arrays >= 0.5
+                gt_labels_arrays = gt_labels_arrays.astype(int)
                 f1 = f1_score(results, gt_labels_arrays)
                 eval_results['f1_score'] = f1*100.
                 log_msg = f'\nf1_score\t{f1:.4f}'
