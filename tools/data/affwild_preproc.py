@@ -239,14 +239,21 @@ def get_labels(it, root):
     if (set == 'Train_Set'):
         with open(os.path.join(path,'list/AffWild2_train_label.txt'), 'r') as f:
             lines = f.readlines()
+        with open(os.path.join(path,'list/AffWild2_train_img_path.txt'), 'r') as f:
+            img_paths = f.readlines()
     elif (set == 'Validation_Set'):
         with open(os.path.join(path,'list/AffWild2_val_label.txt'), 'r') as f:
             lines = f.readlines()
+        with open(os.path.join(path,'list/AffWild2_val_img_path.txt'), 'r') as f:
+            img_paths = f.readlines()
     else:
         with open(os.path.join(path,'list/AffWild2_test_label.txt'), 'r') as f:
             lines = f.readlines()
+        with open(os.path.join(path,'list/AffWild2_test_img_path.txt'), 'r') as f:
+            img_paths = f.readlines()
     # it+1 because it has to skip the first line, line 0 doesn't count
-    return np.array(lines[it+1].split('\n')[0].split()).astype(float)
+    label = np.array(lines[it + 1].split('\n')[0].split()).astype(float)
+    return label
 
 def get_json(it, root):
     #returns the json path
@@ -263,7 +270,7 @@ def get_json(it, root):
         with open(os.path.join(path,'list/AffWild2_test_img_path.txt'), 'r') as f:
             lines = f.readlines()
     # it+1 because it has to skip the first line, line 0 doesn't count
-    image_path = lines[it+1]
+    image_path = lines[it]
     directory_name = os.path.basename(os.path.dirname(image_path))
     file_name = os.path.splitext(os.path.basename(image_path))[0]
     json_file_name = f"{directory_name}.{file_name}.predictions.json"
@@ -272,6 +279,7 @@ def get_json(it, root):
 
 ### Here starts the script
 
+### HERE CHANGE THE PATH WHERE YOU HAVE ALL THE SKELETONS
 path = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons'
 
 
@@ -281,7 +289,7 @@ path = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons'
 
 set = 'Train_Set'
 root = os.path.join(path, set)
-skeleton_files = os.listdir(root)
+skeleton_files = os.listdir(root)  
 names_train = skeleton_files 
 
 anno_dict = {}
@@ -291,8 +299,8 @@ file_count=[]
 if num_process == 1:
     # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
     it = 0
-    for name in tqdm(range(200)): #names_train):
-        labels = get_labels(it, root)
+    for name in tqdm(range(5)): #names_train):
+        labels, img_path = get_labels(it, root)
         file_json = get_json(it, root)
         anno_dict[file_json] = gen_anno(file_json, labels)
         file_count.append(file_json)
@@ -319,8 +327,9 @@ names_val = skeleton_files
 if num_process == 1:
     # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
     it = 0
-    for name in tqdm(range(200)): #names_val):
+    for name in tqdm(range(5)): #names_val):
         labels = get_labels(it, root)
+        print(labels, flush=True)
         file_json = get_json(it, root)
         anno_dict[file_json] = gen_anno(file_json, labels)
         file_count.append(file_json)

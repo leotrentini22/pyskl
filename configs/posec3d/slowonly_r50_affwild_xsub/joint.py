@@ -23,7 +23,7 @@ dataset_type = 'PoseDataset'
 
 
 ### CHANGE HERE THE PATH OF THE ANNOTATION FILE
-ann_file = '/home/trentini/pyskl/tools/data/AffWild_train_full.pkl'
+ann_file = '/home/trentini/pyskl/tools/data/AffWild_train.pkl'
 
 
 left_kp = [] #[1, 3, 5, 7, 9, 11, 13, 15]
@@ -81,4 +81,4 @@ checkpoint_config = dict(interval=1)
 evaluation = dict(interval=1, metrics=['f1_score', 'mean_average_precision']) #, topk=(1, 5))
 log_config = dict(interval=20, hooks=[dict(type='TextLoggerHook')])
 log_level = 'INFO'
-work_dir = './work_dirs/posec3d/slowonly_r50_affwild_xsub_full/joint'
+work_dir = './work_dirs/posec3d/slowonly_r50_affwild_xsub/joint'
