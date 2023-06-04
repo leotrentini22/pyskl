@@ -300,11 +300,9 @@ file_count=[]
 if num_process == 1:
     # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
     it = 0
-    for name in tqdm(range(5)): #names_train):
+    for name in tqdm(range(200)): #names_train):
         labels = get_labels(it, root)
-        print(labels, flush=True)
         labels = labels[positions_to_keep]
-        print(labels, flush=True)
         file_json = get_json(it, root)
         anno_dict[file_json] = gen_anno(file_json, labels)
         file_count.append(file_json)
@@ -331,11 +329,9 @@ skeleton_files = os.listdir(root)
 if num_process == 1:
     # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
     it = 0
-    for name in tqdm(range(5)): #names_val):
+    for name in tqdm(range(200)): #names_val):
         labels = get_labels(it, root)
-        print(labels, flush=True)
         labels = labels[positions_to_keep]
-        print(labels, flush=True)
         file_json = get_json(it, root)
         anno_dict[file_json] = gen_anno(file_json, labels)
         file_count.append(file_json)
