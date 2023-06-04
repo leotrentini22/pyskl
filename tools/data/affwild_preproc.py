@@ -282,7 +282,8 @@ def get_json(it, root):
 ### HERE CHANGE THE PATH WHERE YOU HAVE ALL THE SKELETONS
 path = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons'
 
-
+### THIS IS BECAUSE I HAVE LISTED 41 AUS, BUT AFFWILD2 HAS ONLY 12 AUS, I KEEP ONLY THE ONES OF INTEREST
+positions_to_keep = [0, 1, 2, 4, 5, 7, 9, 12, 19, 20, 21, 22]
 
 
 ### Train
@@ -301,6 +302,9 @@ if num_process == 1:
     it = 0
     for name in tqdm(range(5)): #names_train):
         labels = get_labels(it, root)
+        print(labels, flush=True)
+        labels = labels[positions_to_keep]
+        print(labels, flush=True)
         file_json = get_json(it, root)
         anno_dict[file_json] = gen_anno(file_json, labels)
         file_count.append(file_json)
@@ -313,7 +317,7 @@ else:
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-names_train = [skeleton_files[it] for it in range(5) if file_count[it] is not None]
+xsub_train = [skeleton_files[it] for it in range(5) if file_count[it] is not None]
 
 
 
@@ -330,6 +334,8 @@ if num_process == 1:
     for name in tqdm(range(5)): #names_val):
         labels = get_labels(it, root)
         print(labels, flush=True)
+        labels = labels[positions_to_keep]
+        print(labels, flush=True)
         file_json = get_json(it, root)
         anno_dict[file_json] = gen_anno(file_json, labels)
         file_count.append(file_json)
@@ -342,13 +348,11 @@ else:
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-names_test = [skeleton_files[it] for it in range(5) if file_count[it] is not None]
+xsub_val = [skeleton_files[it] for it in range(5) if file_count[it] is not None]
 
 
 
 #names = [name for name in names if int(name.split('A')[-1]) <= 60]
-xsub_train = [name for name in names_train]
-xsub_val = [name for name in names_val]
 # xview_train = [name for name in names if 'C001' not in name]
 # xview_val = [name for name in names if 'C001' in name]
 split = dict(xsub_train=xsub_train, xsub_val=xsub_val) #xsub_train=xsub_train, xsub_val=xsub_val, xview_train=xview_train, xview_val=xview_val)
