@@ -313,7 +313,7 @@ else:
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-names_train = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
+names_train = [skeleton_files[it] for it in range(5) if file_count[it] is not None]
 
 
 
