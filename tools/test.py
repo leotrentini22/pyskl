@@ -171,10 +171,10 @@ def main():
     if rank == 0:
         print(f'\nwriting results to {out}')
         dataset.dump_results(outputs, out=out)
-        #if eval_cfg:
-            #eval_res = dataset.evaluate(outputs, **eval_cfg)
-            #for name, val in eval_res.items():
-            #    print(f'{name}: {val:.04f}')
+        if eval_cfg:
+            eval_res = dataset.evaluate(outputs, **eval_cfg)
+            for name, val in eval_res.items():
+               print(f'{name}: {val:.04f}')
 
     dist.barrier()
     if rank == 0 and memcached:

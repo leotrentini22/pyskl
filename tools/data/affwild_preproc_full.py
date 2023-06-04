@@ -276,9 +276,11 @@ def get_json(it, root):
 
 ### Here starts the script
 
+### HERE CHANGE THE PATH WHERE YOU HAVE ALL THE SKELETONS
 path = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons'
 
-
+### THIS IS BECAUSE I HAVE LISTED 41 AUS, BUT AFFWILD2 HAS ONLY 12 AUS, I KEEP ONLY THE ONES OF INTEREST
+positions_to_keep = [0, 1, 2, 4, 5, 7, 9, 12, 19, 20, 21, 22]
 
 
 ### Train
@@ -286,7 +288,7 @@ path = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons'
 set = 'Train_Set'
 root = os.path.join(path, set)
 skeleton_files = os.listdir(root)
-names_train = skeleton_files 
+#names_train = skeleton_files 
 
 anno_dict = {}
 num_process = 1
@@ -294,22 +296,25 @@ file_count=[]
 
 if num_process == 1:
     # Each annotations has 7 keys: frame_dir, label, keypoint, total_frames, img_shape, original_shape, keypoint_score
+    it = 0
     for name in tqdm(range(100000)): # MORE OR LESS 400k json in train dataset (seems not complete dataset)
         labels = get_labels(it, root)
+        labels = labels[positions_to_keep]
         file_json = get_json(it, root)
         diction = gen_anno(file_json, labels)
         anno_dict[file_json] = diction
         file_count.append(file_json)
         it += 1
 else:
+    names_train = skeleton_files 
     pool = mp.Pool(num_process)
     annotations = pool.map(gen_anno, names_train)
     pool.close()
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-names_train = [x for x in names_train if anno_dict is not None]
-
+#names_train = [x for x in names_train if anno_dict is not None]
+xsub_train = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
 
 
 ### Val
@@ -317,30 +322,33 @@ names_train = [x for x in names_train if anno_dict is not None]
 set = 'Validation_Set'
 root = os.path.join(path, set)
 skeleton_files = os.listdir(root)
-names_val = skeleton_files 
+#names_val = skeleton_files 
 
 
 if num_process == 1:
     # Each annotations has 7 keys: frame_dir, label, keypoint, total_frames, img_shape, original_shape, keypoint_score
     it = 0
-    for name in tqdm(range(20000)): # MORE OR LESS 250k json in validation dataset (seems not complete dataset)
+    for name in tqdm(range(30000)): # MORE OR LESS 250k json in validation dataset (seems not complete dataset)
         labels = get_labels(it, root)
+        labels = labels[positions_to_keep]
         file_json = get_json(it, root)
         anno_dict[file_json] = gen_anno(file_json, labels)
         file_count.append(file_json)
         it += 1
 else:
+    names_val = skeleton_files 
     pool = mp.Pool(num_process)
     annotations = pool.map(gen_anno, names_val)
     pool.close()
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-names_val = [x for x in names_val if anno_dict is not None]
+#names_val = [x for x in names_val if anno_dict is not None]
+xsub_val = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
 
 
-xsub_train = [name for name in names_train]
-xsub_val = [name for name in names_val]
+#xsub_train = [name for name in names_train]
+#xsub_val = [name for name in names_val]
 # xview_train = [name for name in names if 'C001' not in name]
 # xview_val = [name for name in names if 'C001' in name]
 split = dict(xsub_train=xsub_train, xsub_val=xsub_val) #xview_train=xview_train, xview_val=xview_val)
