@@ -315,7 +315,7 @@ else:
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-xsub_train = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
+names_train = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
 
 
 
@@ -344,10 +344,11 @@ else:
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-xsub_val = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
+names_val = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
 
 
-
+xsub_train = [name for name in names_train]
+xsub_val = [name for name in names_val]
 #names = [name for name in names if int(name.split('A')[-1]) <= 60]
 # xview_train = [name for name in names if 'C001' not in name]
 # xview_val = [name for name in names if 'C001' in name]
