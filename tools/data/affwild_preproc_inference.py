@@ -279,70 +279,27 @@ def get_json(it, root):
 
 ### Here starts the script
 
-### HERE CHANGE THE PATH WHERE YOU HAVE ALL THE SKELETONS
-path = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons'
+### HERE CHANGE THE PATH WHERE YOU HAVE THE SKELETON OF THE IMAGE YOU WANT TO PREDICT
+path = '/home/trentini/face-skeleton-detection/data/AffWild2/skeletons/Validation_Set/'
 
 
-
-
-### Train
-
-set = 'Train_Set'
-root = os.path.join(path, set)
-skeleton_files = os.listdir(root)  
-
+#just to make it work, useless for the inference
+labels = np.zeros(12, float)
 
 anno_dict = {}
 num_process = 1
 file_count=[]
 
-if num_process == 1:
-    # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
-    it = 0
-    for name in tqdm(range(5)): #names_train):
-        labels = get_labels(it, root)
-        file_json = get_json(it, root)
-        anno_dict[file_json] = gen_anno(file_json, labels)
-        file_count.append(file_json)
-        it += 1
-else:
-    names_train = skeleton_files
-    pool = mp.Pool(num_process)
-    annotations = pool.map(gen_anno, names_train)
-    pool.close()
-    for anno in annotations:
-        anno_dict[anno['frame_dir']] = anno
+it = 0
 
-names_train = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
+file_json = get_json(it, path)
+anno_dict[file_json] = gen_anno(file_json, labels)
+file_count.append(file_json)
+it += 1
 
+names_train = [x for x in names_train if anno_dict is not None]
 
-
-### Val
-
-set = 'Validation_Set'
-root = os.path.join(path, set)
-skeleton_files = os.listdir(root)
-
-
-if num_process == 1:
-    # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
-    it = 0
-    for name in tqdm(range(5)): #names_val):
-        labels = get_labels(it, root)
-        print(labels, flush=True)
-        file_json = get_json(it, root)
-        anno_dict[file_json] = gen_anno(file_json, labels)
-        file_count.append(file_json)
-        it += 1
-else:
-    names_val = skeleton_files
-    pool = mp.Pool(num_process)
-    annotations = pool.map(gen_anno, names_val)
-    pool.close()
-    for anno in annotations:
-        anno_dict[anno['frame_dir']] = anno
-
-names_test = [skeleton_files[it] for it in range(5) if file_count[it] is not None]
+names_test = [x for x in names_val if anno_dict is not None]
 
 
 

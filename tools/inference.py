@@ -23,7 +23,7 @@ from pyskl.utils import cache_checkpoint, mc_off, mc_on, test_port
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='pyskl test (and eval) a model')
+        description='pyskl inference with a model')
     parser.add_argument('config', help='test config file path')
     parser.add_argument('-C', '--checkpoint', help='checkpoint file', default=None)
     parser.add_argument(
@@ -165,15 +165,12 @@ def main():
 
     dist.barrier()
     outputs = inference_pytorch(args, cfg, data_loader)
+    print(outputs, flush=True)
 
     rank, _ = get_dist_info()
     if rank == 0:
         print(f'\nwriting results to {out}')
         dataset.dump_results(outputs, out=out)
-        if eval_cfg:
-            eval_res = dataset.evaluate(outputs, **eval_cfg)
-            for name, val in eval_res.items():
-                print(f'{name}: {val:.04f}')
 
     dist.barrier()
     if rank == 0 and memcached:
