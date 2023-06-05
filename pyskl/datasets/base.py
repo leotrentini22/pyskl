@@ -6,14 +6,14 @@ import numpy as np
 import os.path as osp
 import torch
 import warnings
-from sklearn.metrics import f1_score
+#from sklearn.metrics import f1_score
 from abc import ABCMeta, abstractmethod
 from collections import OrderedDict, defaultdict
 from mmcv.utils import print_log
 from torch.utils.data import Dataset
 
 from pyskl.smp import auto_mix2
-from ..core import mean_average_precision, mean_class_accuracy, top_k_accuracy #, f1_score
+from ..core import mean_average_precision, mean_class_accuracy, top_k_accuracy, f1_score
 from .pipelines import Compose
 
 
