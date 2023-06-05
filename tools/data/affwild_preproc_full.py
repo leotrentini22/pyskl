@@ -313,8 +313,8 @@ else:
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-#names_train = [x for x in names_train if anno_dict is not None]
-xsub_train = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
+names_train = [x for x in names_train if anno_dict is not None]
+#xsub_train = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
 
 
 ### Val
@@ -343,12 +343,12 @@ else:
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-#names_val = [x for x in names_val if anno_dict is not None]
-xsub_val = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
+names_val = [x for x in names_val if anno_dict is not None]
+# xsub_val = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
 
 
-#xsub_train = [name for name in names_train]
-#xsub_val = [name for name in names_val]
+xsub_train = [name for name in names_train]
+xsub_val = [name for name in names_val]
 # xview_train = [name for name in names if 'C001' not in name]
 # xview_val = [name for name in names if 'C001' in name]
 split = dict(xsub_train=xsub_train, xsub_val=xsub_val) #xview_train=xview_train, xview_val=xview_val)
