@@ -291,7 +291,7 @@ positions_to_keep = [0, 1, 2, 4, 5, 7, 9, 12, 19, 20, 21, 22]
 set = 'Train_Set'
 root = os.path.join(path, set)
 skeleton_files = os.listdir(root)  
-
+names_train = skeleton_files
 
 anno_dict = {}
 num_process = 1
@@ -315,7 +315,7 @@ else:
     for anno in annotations:
         anno_dict[anno['frame_dir']] = anno
 
-names_train = [x for x in names_val if anno_dict is not None]
+names_train = [x for x in names_train if anno_dict is not None]
 #names_train = [skeleton_files[it] for it in range(200) if file_count[it] is not None]
 
 
@@ -325,7 +325,7 @@ names_train = [x for x in names_val if anno_dict is not None]
 set = 'Validation_Set'
 root = os.path.join(path, set)
 skeleton_files = os.listdir(root)
-
+names_val = skeleton_files
 
 if num_process == 1:
     # Each annotations has 4 keys: frame_dir, labels, keypoint, total_frames
