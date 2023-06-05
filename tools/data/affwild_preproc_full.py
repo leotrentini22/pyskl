@@ -288,7 +288,7 @@ positions_to_keep = [0, 1, 2, 4, 5, 7, 9, 12, 19, 20, 21, 22]
 set = 'Train_Set'
 root = os.path.join(path, set)
 skeleton_files = os.listdir(root)
-#names_train = skeleton_files 
+names_train = skeleton_files 
 
 anno_dict = {}
 num_process = 1
@@ -322,7 +322,7 @@ names_train = [x for x in names_train if anno_dict is not None]
 set = 'Validation_Set'
 root = os.path.join(path, set)
 skeleton_files = os.listdir(root)
-#names_val = skeleton_files 
+names_val = skeleton_files 
 
 
 if num_process == 1:
