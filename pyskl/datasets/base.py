@@ -148,7 +148,8 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         assert len(results) == len(self), (
             f'The length of results is not equal to the dataset len: '
             f'{len(results)} != {len(self)}')
-
+        print("results", flush=True)
+        print(results, flush=True)
         if isinstance(results[0], list) or isinstance(results[0], tuple):
             num_results = len(results[0])
             eval_results = dict()

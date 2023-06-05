@@ -165,7 +165,7 @@ def main():
 
     dist.barrier()
     outputs = inference_pytorch(args, cfg, data_loader)
-    print(outputs, flush=True)
+
 
     rank, _ = get_dist_info()
     if rank == 0:
